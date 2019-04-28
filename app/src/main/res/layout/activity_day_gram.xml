@@ -30,10 +30,10 @@
                 android:textSize="30sp"
                 android:layout_weight="1"/>
         <android.support.v7.widget.RecyclerView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 app:layoutManager="android.support.v7.widget.LinearLayoutManager"
                 android:orientation="horizontal"
-                android:layout_height="wrap_content" android:layout_weight="12"
+                android:layout_height="match_parent" android:layout_weight="70"
                 tools:listitem="@layout/main_view_item"/>
         <LinearLayout
                 android:orientation="horizontal"

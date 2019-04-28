@@ -29,7 +29,7 @@ class DayGram : AppCompatActivity() {
 }
 
 class mainViewAdapter : Adapter<RecyclerView.ViewHolder>() {
-    private var items : Array<Snapshot>? = null
+    private var items : Array<Snapshot?> = arrayOfNulls<Snapshot>(5);
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): RecyclerView.ViewHolder {
         TODO()
@@ -54,21 +54,23 @@ class mainViewAdapter : Adapter<RecyclerView.ViewHolder>() {
      */
 
     override fun getItemCount(): Int {
-        return items!!.size
+        return items.size
     }
 
     override fun onBindViewHolder(holder : RecyclerView.ViewHolder, position : Int) {
-        items?.get(position).let {
-
+        items[position].let { items ->
+            with(holder){
+                TODO()
+            }
         }
     }
 }
 
-class Snapshot(title : String, date : String, image : Bitmap, main : String){
-    var title : String
-    var date : String
-    var image : Bitmap
-    var main : String
+class Snapshot(title : String?, date : String?, image : Bitmap?, main : String?){
+    var title : String?
+    var date : String?
+    var image : Bitmap?
+    var main : String?
     init{
         this.title = title
         this.date = date
