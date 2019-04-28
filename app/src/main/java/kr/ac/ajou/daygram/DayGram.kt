@@ -6,6 +6,7 @@ import android.media.Image
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.Adapter
 import android.text.Layout
@@ -25,16 +26,20 @@ class DayGram : AppCompatActivity() {
         setContentView(R.layout.activity_day_gram)
         window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         supportActionBar?.hide()
+
+        recycler_list.adapter = mainViewAdapter()
+        recycler_list.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
     }
 }
 
 class mainViewAdapter : Adapter<RecyclerView.ViewHolder>() {
     private var items : Array<Snapshot?> = arrayOfNulls<Snapshot>(5);
 
-    override fun onCreateViewHolder(p0: ViewGroup, p1: Int): RecyclerView.ViewHolder {
-        TODO()
-    }
+    override fun onCreateViewHolder(p0: ViewGroup, p1: Int) = MainViewHolder(p0)
 
+    inner class MainViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.main_view_item,parent,false)){
+
+    }
     /*
     public ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
     final View view = LayoutInflater.from(parent.getContext())
@@ -60,7 +65,6 @@ class mainViewAdapter : Adapter<RecyclerView.ViewHolder>() {
     override fun onBindViewHolder(holder : RecyclerView.ViewHolder, position : Int) {
         items[position].let { items ->
             with(holder){
-                TODO()
             }
         }
     }

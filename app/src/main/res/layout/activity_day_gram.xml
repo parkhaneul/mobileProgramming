@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:layout_width="match_parent" android:layout_height="match_parent"
              android:background="#ffffff"
-             tools:context=".DayGram">
+             tools:context=".DayGram" android:id="@+id/main_view">
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -34,7 +34,7 @@
                 app:layoutManager="android.support.v7.widget.LinearLayoutManager"
                 android:orientation="horizontal"
                 android:layout_height="match_parent" android:layout_weight="70"
-                tools:listitem="@layout/main_view_item"/>
+                tools:listitem="@layout/main_view_item" android:id="@+id/recycler_list"/>
         <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
