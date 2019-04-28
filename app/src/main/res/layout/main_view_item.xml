@@ -4,8 +4,7 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              android:background="#ffffff"
-             android:layout_margin="30dp"
-             tools:context=".DayGram">
+             android:layout_margin="30dp">
     <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -17,7 +16,6 @@
     <kr.ac.ajou.daygram.RoundImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/round_box"
             android:src="@drawable/image"
             android:id="@+id/imageView"/>
 </FrameLayout>
