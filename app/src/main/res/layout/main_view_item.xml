@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
              android:layout_margin="10dp">
     <kr.ac.ajou.daygram.RoundImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/round_box"
         android:id="@+id/imageView"/>
-    <ImageView android:layout_width="match_parent"
+
+    <ImageView android:layout_width="wrap_content"
                android:layout_height="match_parent"
+               android:scaleType="centerCrop"
+               android:adjustViewBounds="true"
                android:src="@drawable/image"
-               android:padding="6dp"
+               android:padding="10dp"
     />
     <TextView
             android:layout_width="match_parent"

@@ -40,6 +40,7 @@ class mainViewAdapter : Adapter<RecyclerView.ViewHolder>() {
     inner class MainViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.main_view_item,parent,false)){
 
     }
+
     /*
     public ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
     final View view = LayoutInflater.from(parent.getContext())

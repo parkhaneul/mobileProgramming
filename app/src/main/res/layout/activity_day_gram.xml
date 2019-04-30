@@ -6,6 +6,8 @@
              android:background="#ffffff"
              tools:context=".DayGram" android:id="@+id/main_view">
     <LinearLayout
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="48dp"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
