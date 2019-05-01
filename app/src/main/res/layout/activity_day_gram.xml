@@ -16,13 +16,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:layout_weight="1">
             <Button
-                    android:text="Button"
+                    android:text="@android:string/search_go"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:id="@+id/button" android:layout_weight="1"/>
+                    android:layout_height="wrap_content" android:id="@+id/SearchButton" android:layout_weight="1"/>
             <Button
-                    android:text="Button"
+                    android:text="List"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:id="@+id/button2" android:layout_weight="1"/>
+                    android:layout_height="wrap_content" android:id="@+id/ListButton" android:layout_weight="1"/>
         </LinearLayout>
         <TextView
                 android:text="2019"
@@ -30,7 +30,7 @@
                 android:textAlignment="center"
                 android:layout_height="wrap_content"
                 android:textSize="30sp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" android:id="@+id/YearText"/>
         <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 app:layoutManager="android.support.v7.widget.LinearLayoutManager"
@@ -42,17 +42,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:layout_weight="1">
             <Button
-                    android:text="Button"
+                    android:text="Date"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:id="@+id/button3" android:layout_weight="1"/>
+                    android:layout_height="wrap_content" android:id="@+id/DateButton" android:layout_weight="1"/>
             <Button
-                    android:text="Button"
+                    android:text="Write"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:id="@+id/button4" android:layout_weight="1"/>
+                    android:layout_height="wrap_content" android:id="@+id/WriteButton" android:layout_weight="1"/>
             <Button
-                    android:text="Button"
+                    android:text="Calender"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:id="@+id/button5" android:layout_weight="1"/>
+                    android:layout_height="wrap_content" android:id="@+id/CalenderButton" android:layout_weight="1"/>
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

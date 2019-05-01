@@ -15,5 +15,6 @@ class RoundImageView : ImageView{
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
     override fun onDraw(canvas: Canvas){
+
     }
 }
