@@ -32,7 +32,7 @@
                 android:textSize="30sp"
                 android:layout_weight="1" android:id="@+id/YearText"/>
         <android.support.v7.widget.RecyclerView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 app:layoutManager="android.support.v7.widget.LinearLayoutManager"
                 android:orientation="horizontal"
                 android:layout_height="match_parent" android:layout_weight="70"

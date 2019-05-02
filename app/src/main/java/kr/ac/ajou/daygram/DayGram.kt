@@ -1,9 +1,11 @@
 package kr.ac.ajou.daygram
 
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.PagerSnapHelper
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.Adapter
 import android.view.LayoutInflater
@@ -11,10 +13,14 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import kotlinx.android.synthetic.main.activity_day_gram.*
 
+
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
+
+private val screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels
+
 class DayGram : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,7 +29,9 @@ class DayGram : AppCompatActivity() {
         supportActionBar?.hide()
 
         recycler_list.adapter = MainViewAdapter()
-        recycler_list.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        //recycler_list.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        var helper = PagerSnapHelper()
+        helper.attachToRecyclerView(recycler_list)
     }
 }
 
@@ -84,4 +92,3 @@ class Snapshot(title : String?, date : String?, month : String?, image : Bitmap?
         this.main = main
     }
 }
-

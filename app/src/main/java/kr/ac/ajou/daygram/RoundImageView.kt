@@ -4,17 +4,25 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Path
 import android.graphics.RectF
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.widget.ImageView
+import android.R.attr.radius
+
+
 
 class RoundImageView : ImageView{
+
+    var radius = 50.0f
+
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
     override fun onDraw(canvas: Canvas){
-
+        val clipPath = Path()
+        val rect = RectF(0f, 0f, this.width.toFloat(), this.height.toFloat())
+        clipPath.addRoundRect(rect, radius, radius, Path.Direction.CW)
+        canvas.clipPath(clipPath)
+        super.onDraw(canvas)
     }
 }
