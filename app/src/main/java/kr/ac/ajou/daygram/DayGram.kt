@@ -28,7 +28,8 @@ class DayGram : AppCompatActivity() {
         supportActionBar?.hide()
 
         recycler_list.adapter = mainViewAdapter()
-        recycler_list.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        var layoutManager : LinearLayoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL, false)
+        recycler_list.layoutManager = layoutManager
     }
 }
 
