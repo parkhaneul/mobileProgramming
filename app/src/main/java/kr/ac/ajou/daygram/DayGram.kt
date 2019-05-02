@@ -4,13 +4,14 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.PagerSnapHelper
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.Adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Button
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_day_gram.*
 
 
@@ -22,9 +23,28 @@ import kotlinx.android.synthetic.main.activity_day_gram.*
 private val screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels
 
 class DayGram : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_day_gram)
+
+        // activity_day_gram에 있는 버튼들 조작
+        SearchButton.setOnClickListener {
+            // TODO
+        }
+        ListButton.setOnClickListener {
+            // TODO
+        }
+        WriteButton.setOnClickListener {
+            Toast.makeText(this , "Write Button pressed", Toast.LENGTH_SHORT).show();
+        }
+        DateButton.setOnClickListener {
+            // TODO
+        }
+        CalenderButton.setOnClickListener {
+            // TODO
+        }
+
         window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         supportActionBar?.hide()
 
@@ -32,11 +52,12 @@ class DayGram : AppCompatActivity() {
         //recycler_list.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         var helper = PagerSnapHelper()
         helper.attachToRecyclerView(recycler_list)
+
     }
 }
 
 class MainViewAdapter : Adapter<RecyclerView.ViewHolder>() {
-    private var items : Array<Snapshot?> = arrayOfNulls<Snapshot>(5);
+    public var items : Array<Snapshot?> = arrayOfNulls<Snapshot>(5)
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int) = MainViewHolder(p0)
 
