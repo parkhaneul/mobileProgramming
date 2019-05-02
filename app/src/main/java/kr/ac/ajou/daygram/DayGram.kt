@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView.Adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Button
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_day_gram.*
 
@@ -20,7 +19,7 @@ import kotlinx.android.synthetic.main.activity_day_gram.*
  * status bar and navigation/system bar) with user interaction.
  */
 
-private val screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels
+//private val screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels
 
 class DayGram : AppCompatActivity() {
 
@@ -57,7 +56,7 @@ class DayGram : AppCompatActivity() {
 }
 
 class MainViewAdapter : Adapter<RecyclerView.ViewHolder>() {
-    public var items : Array<Snapshot?> = arrayOfNulls<Snapshot>(5)
+    private var items : Array<Snapshot?> = arrayOfNulls<Snapshot>(5)
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int) = MainViewHolder(p0)
 
@@ -88,9 +87,6 @@ class MainViewAdapter : Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder : RecyclerView.ViewHolder, position : Int) {
-        items[position]?.date = ""+position+1
-        items[position]?.month = "MAY"
-
 
         items[position].let { items ->
             with(holder) {
