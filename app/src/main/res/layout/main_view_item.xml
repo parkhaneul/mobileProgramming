@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
+             xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
              android:layout_margin="10dp">
     <kr.ac.ajou.daygram.RoundImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/round_box"
-        android:id="@+id/imageView"/>
-
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/round_box"
+            android:id="@+id/imageView"
+    />
     <ImageView android:layout_width="wrap_content"
                android:layout_height="match_parent"
                android:scaleType="centerCrop"
@@ -17,11 +18,26 @@
                android:padding="10dp"
     />
     <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/DateText"
             android:textSize="60sp"
             android:text="30"
+            android:paddingTop="20dp"
+            android:paddingLeft="30dp"
             android:textColor="#ffffffff"
-            android:textAlignment="viewStart"/>
+            android:textAlignment="center"
+    />
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/MonthText"
+            android:textSize="36dp"
+            android:text="MAY"
+            android:paddingTop="95dp"
+            android:paddingLeft="30dp"
+            android:textColor="#ffffffff"
+            android:textAlignment="center"
+    />
+
 </FrameLayout>
