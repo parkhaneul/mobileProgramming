@@ -1,6 +1,5 @@
 package kr.ac.ajou.daygram
 
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -8,10 +7,15 @@ import android.support.v7.widget.PagerSnapHelper
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.Adapter
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.TextView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_day_gram.*
+import org.w3c.dom.Text
+import java.time.LocalDateTime
+import java.util.*
 
 
 /**
@@ -27,23 +31,6 @@ class DayGram : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_day_gram)
 
-        // activity_day_gram에 있는 버튼들 조작
-        SearchButton.setOnClickListener {
-            // TODO
-        }
-        ListButton.setOnClickListener {
-            // TODO
-        }
-        WriteButton.setOnClickListener {
-            Toast.makeText(this , "Write Button pressed", Toast.LENGTH_SHORT).show();
-        }
-        DateButton.setOnClickListener {
-            // TODO
-        }
-        CalenderButton.setOnClickListener {
-            // TODO
-        }
-
         window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         supportActionBar?.hide()
 
@@ -52,18 +39,56 @@ class DayGram : AppCompatActivity() {
         var helper = PagerSnapHelper()
         helper.attachToRecyclerView(recycler_list)
 
+        // activity_day_gram 에 있는 버튼들 조작
+        SearchButton.setOnClickListener {
+            // TODO
+        }
+        ListButton.setOnClickListener {
+            // TODO
+        }
+        WriteButton.setOnClickListener {
+            Toast.makeText(this , "Write Button pressed", Toast.LENGTH_SHORT).show()
+        }
+        DateButton.setOnClickListener {
+            // TODO
+        }
+        CalenderButton.setOnClickListener {
+            // TODO
+        }
     }
 }
 
-class MainViewAdapter : Adapter<RecyclerView.ViewHolder>() {
-    private var items : Array<Snapshot?> = arrayOfNulls<Snapshot>(5)
+class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
 
-    override fun onCreateViewHolder(p0: ViewGroup, p1: Int) = MainViewHolder(p0)
+    var items : Array<Snapshot> = arrayOf(Snapshot(), Snapshot())
 
-    inner class MainViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.main_view_item,parent,false)){
+    override fun onCreateViewHolder(p0: ViewGroup, p1: Int): SnapshotViewHolder{
+        var holder = LayoutInflater.from(p0.context).inflate(R.layout.main_view_item, p0, false)
 
+        return SnapshotViewHolder(holder)
     }
-    
+
+    override fun onBindViewHolder(holder : SnapshotViewHolder, position : Int) {
+        holder.dateTextView.text = items[position].date
+        holder.monthTextView.text = items[position].month
+        holder.image.setImageResource(R.drawable.image_default)
+
+        /*
+        items[position].let { items ->
+            with(holder) {}
+        }*/
+    }
+
+    override fun getItemCount(): Int {
+        return items.size
+    }
+
+    class SnapshotViewHolder(view : View) : RecyclerView.ViewHolder(view){
+        var image : RoundImageView = view.findViewById(R.id.SnapshotImage)
+        var dateTextView : TextView = view.findViewById(R.id.DateText)
+        var monthTextView : TextView = view.findViewById(R.id.MonthText)
+    }
+
     /*
     public ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
     final View view = LayoutInflater.from(parent.getContext())
@@ -81,31 +106,12 @@ class MainViewAdapter : Adapter<RecyclerView.ViewHolder>() {
     return holder;
 }
      */
-
-    override fun getItemCount(): Int {
-        return items.size
-    }
-
-    override fun onBindViewHolder(holder : RecyclerView.ViewHolder, position : Int) {
-
-        items[position].let { items ->
-            with(holder) {
-            }
-        }
-    }
 }
 
-class Snapshot(title : String?, date : String?, month : String?, image : Bitmap?, main : String?){
-    var title : String?
-    var date : String?
-    var month : String?
-    var image : Bitmap?
-    var main : String?
-    init{
-        this.title = title
-        this.date = date
-        this.month = month
-        this.image = image
-        this.main = main
-    }
+class Snapshot(title : String = "title", date : String = "0", month : String = "MAY", main : String = "main"){
+    var title : String = title
+    var date : String? = date
+    var month : String? = month
+    //var image : Bitmap? = bitmap
+    var main : String? = main
 }
