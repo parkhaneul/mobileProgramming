@@ -23,11 +23,12 @@ class DayGram : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_day_gram)
-
         window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         supportActionBar?.hide()
 
+        var db = DataBaseHelper(this)
         val recyclerViewAdapter = MainViewAdapter()
+        recyclerViewAdapter.items = db.getAll()
         recycler_list.adapter = recyclerViewAdapter
         val helper = PagerSnapHelper()
         helper.attachToRecyclerView(recycler_list)
@@ -43,7 +44,8 @@ class DayGram : AppCompatActivity() {
         }
         WriteButton.setOnClickListener {
             // 새 Snapshot을 만든다. day는 임시로 붙임
-            recyclerViewAdapter.items.add(Snapshot("Title", ""+recyclerViewAdapter.itemCount, "MAY", "main"))
+            var temp = Snapshot("Title", ""+recyclerViewAdapter.itemCount, "MAY", "main")
+            db.add(temp)
             recyclerViewAdapter.notifyItemInserted(recyclerViewAdapter.itemCount)
         }
         DateButton.setOnClickListener {
@@ -110,11 +112,13 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
      */
 }
 
-class Snapshot(title : String = "title", date : String = "0", month : String = "MTH", main : String = "main"){
+class Snapshot(title : String = "title", date : String = "0", month : String = "MTH",year : String = "YEAR", main : String = "main"){
     // init 생성자는 필요 없다네요 Kotlin 생성자는 신기하네
+    var id : Int = 0
     var title : String = title
     var date : String = date
     var month : String = month
+    var year : String = year
     var image : Int = R.drawable.image_default
     // 사실 Bitmap 이 뭔지 잘 모르겠다. 아직 이미지는 한 장 뿐이니까...
     var main : String? = main
