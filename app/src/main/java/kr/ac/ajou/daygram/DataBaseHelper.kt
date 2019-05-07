@@ -21,13 +21,13 @@ class DataBaseHelper(context : Context) : SQLiteOpenHelper(context,DATABASE_NAME
 
     override fun onCreate(db: SQLiteDatabase?) {
         var CREATE_SNAPSHOT : String = "CREATE TABLE " + DATABASE_SNAPSHOT + " (" +
-                KEY_ID + " INTERGER PRIMARY KEY AUTOINCREMENT, " +
-                KEY_TITLE + " TEXT NOT NULL, " +
-                KEY_DATE + " TEXT NOT NULL, " +
-                KEY_MONTH + " TEXT NOT NULL, " +
-                KEY_YEAR + " TEXT NOT NULL, " +
-                KEY_IMAGE + " TEXT NOT NULL, " +
-                KEY_MAIN + " TEXT NOT NULL" + ");"
+                KEY_ID + " integer primary key autoincrement, " +
+                KEY_TITLE + " TITLE, " +
+                KEY_DATE + " DATE, " +
+                KEY_MONTH + " MONTH, " +
+                KEY_YEAR + " YEAR, " +
+                KEY_IMAGE + " IMAGE, " +
+                KEY_MAIN + " MAIN);"
         db?.execSQL(CREATE_SNAPSHOT)
     }
 

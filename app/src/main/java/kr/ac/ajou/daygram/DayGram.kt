@@ -52,7 +52,7 @@ class DayGram : AppCompatActivity() {
             // TODO
         }
         CalenderButton.setOnClickListener {
-            // TODO
+            print(db.getAll())
         }
     }
 }
