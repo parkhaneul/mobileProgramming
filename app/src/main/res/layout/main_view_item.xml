@@ -4,38 +4,54 @@
             android:layout_height="match_parent"
             android:padding="15dp">
 
-    <kr.ac.ajou.daygram.RoundImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
-            android:src="@drawable/image_default"
-            android:id="@+id/SnapshotImage"/>
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/DateText"
-            android:textSize="60sp"
-            android:text="@string/_30"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp"
-            android:paddingLeft="30dp"
-            android:paddingRight="30dp"
-            android:textColor="#ffffffff"
-            android:textAlignment="center"
-    />
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/MonthText"
-            android:textSize="36sp"
-            android:text="MAY"
-            android:paddingLeft="30dp"
-            android:paddingRight="30dp"
-            android:paddingTop="95dp"
-            android:textColor="#ffffffff"
-            android:textAlignment="center"
-    />
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" android:layout_weight="1">
+
+            <kr.ac.ajou.daygram.RoundImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:scaleType="centerCrop"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/image_default"
+                    android:id="@+id/SnapshotImage"/>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/DateText"
+                    android:textSize="60sp"
+                    android:text="@string/_30"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="20dp"
+                    android:paddingLeft="30dp"
+                    android:paddingRight="30dp"
+                    android:textColor="#ffffffff"
+                    android:textAlignment="center"
+            />
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/MonthText"
+                    android:textSize="36sp"
+                    android:text="MAY"
+                    android:paddingLeft="30dp"
+                    android:paddingRight="30dp"
+                    android:paddingTop="95dp"
+                    android:textColor="#ffffffff"
+                    android:textAlignment="center"
+            />
+        </FrameLayout>
+        <TextView
+                android:text="TextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:id="@+id/titleTextView" android:layout_weight="0"
+                android:textSize="32sp"
+                android:textAlignment="center"/>
+    </LinearLayout>
 
 </FrameLayout>

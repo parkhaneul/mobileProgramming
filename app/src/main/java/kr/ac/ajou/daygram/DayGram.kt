@@ -12,6 +12,8 @@ import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_day_gram.*
+import java.time.Month
+import java.util.*
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -43,16 +45,18 @@ class DayGram : AppCompatActivity() {
             // TODO
         }
         WriteButton.setOnClickListener {
-            // 새 Snapshot을 만든다. day는 임시로 붙임
-            var temp = Snapshot("Title", ""+recyclerViewAdapter.itemCount, "MAY", "main")
+            var temp = Snapshot("Title", ""+recyclerViewAdapter.itemCount)
             db.add(temp)
+            recyclerViewAdapter.items.add(temp)
             recyclerViewAdapter.notifyItemInserted(recyclerViewAdapter.itemCount)
         }
         DateButton.setOnClickListener {
             // TODO
         }
         CalenderButton.setOnClickListener {
-            print(db.getAll())
+            db.removeAll()
+            recyclerViewAdapter.items.clear()
+            recyclerViewAdapter.notifyDataSetChanged()
         }
     }
 }
@@ -72,14 +76,16 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
     override fun onBindViewHolder(holder : SnapshotViewHolder, position : Int) {
         // Snapshot 의 내용들을 items ArrayList의 값에 따라 바꾼다
         // 근데 로컬에 데이터 저장하고 불러오려면 어떻게 바꿔야 하지
-        holder.dateTextView.text = items[position].date
-        holder.monthTextView.text = items[position].month
-        holder.image.setImageResource(items[position].image)
-
-        /* 이건 뭐죠
         items[position].let { items ->
-            with(holder) {}
-        }*/
+            with(holder) {
+                val gc = GregorianCalendar(TimeZone.getTimeZone("Asia/Seoul"))
+                gc.timeInMillis = items.time
+                this.dateTextView.text = gc.get(GregorianCalendar.DATE).toString()
+                this.monthTextView.text = gc.getDisplayName(GregorianCalendar.MONTH,GregorianCalendar.LONG,Locale.US)
+                this.titleTextView.text = items.title
+                this.image.setImageResource(items.image)
+            }
+        }
     }
 
     override fun getItemCount(): Int {
@@ -91,6 +97,7 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
         var image : RoundImageView = view.findViewById(R.id.SnapshotImage)
         var dateTextView : TextView = view.findViewById(R.id.DateText)
         var monthTextView : TextView = view.findViewById(R.id.MonthText)
+        var titleTextView : TextView = view.findViewById(R.id.titleTextView)
     }
 
     /*
@@ -111,14 +118,11 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
 }
      */
 }
-
-class Snapshot(title : String = "title", date : String = "0", month : String = "MTH",year : String = "YEAR", main : String = "main"){
+class Snapshot(title : String = "title", main : String = "main",gc : GregorianCalendar = GregorianCalendar(TimeZone.getTimeZone("Asia/Seoul"))){
     // init 생성자는 필요 없다네요 Kotlin 생성자는 신기하네
     var id : Int = 0
     var title : String = title
-    var date : String = date
-    var month : String = month
-    var year : String = year
+    var time = gc.timeInMillis
     var image : Int = R.drawable.image_default
     // 사실 Bitmap 이 뭔지 잘 모르겠다. 아직 이미지는 한 장 뿐이니까...
     var main : String? = main
