@@ -36,6 +36,10 @@
                 app:layoutManager="android.support.v7.widget.LinearLayoutManager"
                 android:orientation="horizontal"
                 android:layout_height="match_parent" android:layout_weight="70"
+                android:clipToPadding="false"
+                android:layout_gravity="center"
+                android:paddingTop = "10dp"
+                android:paddingBottom="10dp"
                 tools:listitem="@layout/main_view_item" android:id="@+id/recycler_list"/>
         <LinearLayout
                 android:orientation="horizontal"

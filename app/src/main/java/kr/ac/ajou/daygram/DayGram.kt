@@ -1,7 +1,12 @@
 package kr.ac.ajou.daygram
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import android.support.v7.widget.PagerSnapHelper
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.Adapter
@@ -9,10 +14,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.animation.AnimationUtils
 import android.widget.TextView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_day_gram.*
-import java.time.Month
 import java.util.*
 
 /**
@@ -22,11 +27,22 @@ import java.util.*
 
 class DayGram : AppCompatActivity() {
 
+    val TAKE_PICTURE = 1
+    //https://blog.naver.com/whdals0/221408855795
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_day_gram)
         window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         supportActionBar?.hide()
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            if(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
+            }else{
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA),1)
+                //권한 변경 요청
+            }
+        }
 
         var db = DataBaseHelper(this)
         val recyclerViewAdapter = MainViewAdapter()
@@ -45,10 +61,12 @@ class DayGram : AppCompatActivity() {
             // TODO
         }
         WriteButton.setOnClickListener {
-            var temp = Snapshot("Title", ""+recyclerViewAdapter.itemCount)
+            val cameraIntent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
+            startActivityForResult(cameraIntent,TAKE_PICTURE)
+            /*var temp = Snapshot("Title", ""+recyclerViewAdapter.itemCount)
             db.add(temp)
             recyclerViewAdapter.items.add(temp)
-            recyclerViewAdapter.notifyItemInserted(recyclerViewAdapter.itemCount)
+            recyclerViewAdapter.notifyItemInserted(recyclerViewAdapter.itemCount)*/
         }
         DateButton.setOnClickListener {
             // TODO
@@ -67,8 +85,8 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
     // 원래 Array였는데 추가하기 편하려고 바꿈
     var items : ArrayList<Snapshot> = arrayListOf(Snapshot())
 
-    override fun onCreateViewHolder(p0: ViewGroup, p1: Int): SnapshotViewHolder{
-        var holder = LayoutInflater.from(p0.context).inflate(R.layout.main_view_item, p0, false)
+    override fun onCreateViewHolder(parent: ViewGroup, p1: Int): SnapshotViewHolder{
+        var holder = LayoutInflater.from(parent.context).inflate(R.layout.main_view_item,parent, false)
         return SnapshotViewHolder(holder)
     }
 
@@ -84,6 +102,20 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
                 this.monthTextView.text = gc.getDisplayName(GregorianCalendar.MONTH,GregorianCalendar.LONG,Locale.US)
                 this.titleTextView.text = items.title
                 this.image.setImageResource(items.image)
+
+                this.itemView.setOnFocusChangeListener(object : View.OnFocusChangeListener {
+                    override fun onFocusChange(view : View?, hasFocus: Boolean) {
+                        if(hasFocus){
+                            val anim = AnimationUtils.loadAnimation(itemView.context,R.anim.scale_in)
+                            itemView.startAnimation(anim)
+                            anim.fillAfter = true
+                        }else{
+                            val anim = AnimationUtils.loadAnimation(itemView.context, R.anim.scale_out)
+                            itemView.startAnimation(anim)
+                            anim.fillAfter = true
+                        }
+                    }
+                })
             }
         }
     }
@@ -98,6 +130,8 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
         var dateTextView : TextView = view.findViewById(R.id.DateText)
         var monthTextView : TextView = view.findViewById(R.id.MonthText)
         var titleTextView : TextView = view.findViewById(R.id.titleTextView)
+
+
     }
 
     /*
