@@ -1,6 +1,6 @@
 package kr.ac.ajou.daygram
 
-import android.support.test.InstrumentationRegistry
+import androidx.test.InstrumentationRegistry
 import org.junit.Test
 
 /**

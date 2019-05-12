@@ -4,12 +4,12 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import android.support.v7.widget.PagerSnapHelper
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.RecyclerView.Adapter
+import androidx.core.app.ActivityCompat
+import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.Adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,13 +63,12 @@ class DayGram : AppCompatActivity() {
         WriteButton.setOnClickListener {
             val cameraIntent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
             startActivityForResult(cameraIntent,TAKE_PICTURE)
-            /*var temp = Snapshot("Title", ""+recyclerViewAdapter.itemCount)
-            db.add(temp)
-            recyclerViewAdapter.items.add(temp)
-            recyclerViewAdapter.notifyItemInserted(recyclerViewAdapter.itemCount)*/
         }
         DateButton.setOnClickListener {
-            // TODO
+            var temp = Snapshot("Title", ""+recyclerViewAdapter.itemCount)
+            db.add(temp)
+            recyclerViewAdapter.items.add(temp)
+            recyclerViewAdapter.notifyItemInserted(recyclerViewAdapter.itemCount)
         }
         CalenderButton.setOnClickListener {
             db.removeAll()
