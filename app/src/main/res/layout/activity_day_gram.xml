@@ -5,22 +5,23 @@
              android:layout_width="match_parent" android:layout_height="match_parent"
              android:background="#ffffff"
              tools:context=".DayGram" android:id="@+id/main_view">
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+        <SearchView
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:paddingTop="20dp"
+                android:background="#ffffffff"
+        />
+    </com.google.android.material.appbar.AppBarLayout>
+
     <LinearLayout
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="56dp"
             android:layout_marginBottom="48dp"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-        <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:layout_weight="0">
-
-            <SearchView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
         <TextView
                 android:text="2019"
                 android:layout_width="match_parent"
@@ -32,18 +33,19 @@
                 android:layout_width="wrap_content"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:orientation="horizontal"
-                android:layout_height="match_parent" android:layout_weight="2"
-                android:clipToPadding="false"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
                 android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                tools:listitem="@layout/main_view_item" android:id="@+id/recycler_list">
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
+                tools:listitem="@layout/main_view_item_material"
+                android:id="@+id/recycler_list">
         </androidx.recyclerview.widget.RecyclerView>
         <ImageButton
                 android:background="@drawable/baseline_camera_24"
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_gravity="center"
-                android:id="@+id/button2" android:backgroundTint="#000000"/>
+                android:id="@+id/CameraButton" android:backgroundTint="#000000"/>
     </LinearLayout>
 </FrameLayout>

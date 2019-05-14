@@ -8,12 +8,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="FullscreenTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="android:windowBackground">@null</item>
+    <style name="FullscreenTheme" parent="Theme.MaterialComponents.Light">
         <item name="android:windowFullscreen">false</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:fitsSystemWindows">true</item>
     </style>
 
     <style name="MainScreenTheme" parent="Theme.MaterialComponents.Light">
