@@ -14,8 +14,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.app.ActivityOptionsCompat
 import com.google.android.material.card.MaterialCardView
 import kotlinx.android.synthetic.main.activity_day_gram.*
 import java.util.*
@@ -78,7 +80,6 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): SnapshotViewHolder{
         var holder = LayoutInflater.from(parent.context).inflate(R.layout.main_view_item_material,parent, false)
-
         return SnapshotViewHolder(holder)
     }
 
@@ -86,6 +87,7 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
     override fun onBindViewHolder(holder : SnapshotViewHolder, position : Int) {
         // Snapshot 의 내용들을 items ArrayList의 값에 따라 바꾼다
         // 근데 로컬에 데이터 저장하고 불러오려면 어떻게 바꿔야 하지
+
         items[position].let { items ->
             with(holder) {
                 val gc = GregorianCalendar(TimeZone.getTimeZone("Asia/Seoul"))
@@ -96,6 +98,14 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
                 this.timeTextView.text = gc.get(GregorianCalendar.HOUR_OF_DAY).toString() + " : " + gc.get(GregorianCalendar.MINUTE).toString()
                 this.image.setImageResource(items.image)
             }
+        }
+
+        holder.layout.setOnClickListener {
+            var intent = Intent(it.context,DayGramDetailView::class.java)
+            //intent.putExtra(EXTRA_CONTACT, contact)
+            //var options = ActivityOptionsCompat.makeSceneTransitionAnimation(,it,"profile")
+            //it.context.startActivity(intent,options.)
+
         }
     }
 
@@ -111,6 +121,7 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
         var monthTextView : TextView = view.findViewById(R.id.MonthText)
         var titleTextView : TextView = view.findViewById(R.id.TitleText)
         var timeTextView : TextView = view.findViewById(R.id.TimeText)
+        var layout : FrameLayout = view.findViewById(R.id.layout)
     }
 
     /*
