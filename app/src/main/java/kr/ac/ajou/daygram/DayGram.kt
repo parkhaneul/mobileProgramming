@@ -17,17 +17,8 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.app.ActivityOptionsCompat
-import com.google.android.material.card.MaterialCardView
 import kotlinx.android.synthetic.main.activity_day_gram.*
 import java.util.*
-import java.util.jar.Attributes
-import kotlin.coroutines.coroutineContext
-
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
 
 class DayGram : AppCompatActivity() {
 
@@ -40,6 +31,7 @@ class DayGram : AppCompatActivity() {
         window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         supportActionBar?.hide()
 
+        // SDK 버전, 권한 확인
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             if(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
             }else{
@@ -47,6 +39,7 @@ class DayGram : AppCompatActivity() {
             }
         }
 
+        // 데이터베이스 설정
         var db = DataBaseHelper(this)
         val recyclerViewAdapter = MainViewAdapter()
         recyclerViewAdapter.items = db.getAll()
@@ -57,53 +50,42 @@ class DayGram : AppCompatActivity() {
         // activity_day_gram.xml 에 있는 버튼 조작
         CameraButton.setOnClickListener {
             val cameraIntent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
-            startActivityForResult(cameraIntent,TAKE_PICTURE)
+            startActivityForResult(cameraIntent, TAKE_PICTURE)
         }
-        /*
-        DateButton.setOnClickListener {
-            var temp = Snapshot("Title", ""+recyclerViewAdapter.itemCount)
-            db.add(temp)
-            recyclerViewAdapter.items.add(temp)
-            recyclerViewAdapter.notifyItemInserted(recyclerViewAdapter.itemCount)
-        }
-        CalenderButton.setOnClickListener {
-            db.removeAll()
-            recyclerViewAdapter.items.clear()
-            recyclerViewAdapter.notifyDataSetChanged()
-        }*/
     }
 }
 
 class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
-
-    // Snapshot ViewHolder의 내용이 저장되는 ArrayList
-    // 원래 Array였는데 추가하기 편하려고 바꿈
+    // SnapshotViewHolder의 내용이 저장되는 ArrayList
     var items : ArrayList<Snapshot> = arrayListOf(Snapshot())
 
+    // SnapshotViewHolder 생성자를 호출해 줌. 수정할 일 없음
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): SnapshotViewHolder{
-        var holder = LayoutInflater.from(parent.context).inflate(R.layout.main_view_item_material,parent, false)
+        var holder = LayoutInflater.from(parent.context).inflate(R.layout.main_view_item_material, parent, false)
         return SnapshotViewHolder(holder)
     }
 
     // Custom ViewHolder
     override fun onBindViewHolder(holder : SnapshotViewHolder, position : Int) {
-        // Snapshot 의 내용들을 items ArrayList의 값에 따라 바꾼다
-        // 근데 로컬에 데이터 저장하고 불러오려면 어떻게 바꿔야 하지
+        // 사용자가 카드를 스크롤할 때 마다 Snapshot 의 내용들을 items 의 index 에 따라 바꾼다
+        // 그러니까 여기선 값을 바꾸는 게 아니라 items 리스트의 값을 가져오기만 해야 함!
+        // 값을 바꾸려면 items 의 element, Snapshot 객체를 수정해야 함
 
         items[position].let { items ->
             with(holder) {
                 val gc = GregorianCalendar(TimeZone.getTimeZone("Asia/Seoul"))
-                gc.timeInMillis = items.time
+                //gc.timeInMillis = items.writeTime
                 this.dateTextView.text = gc.get(GregorianCalendar.DATE).toString()
                 this.monthTextView.text = gc.getDisplayName(GregorianCalendar.MONTH,GregorianCalendar.LONG,Locale.US)
                 this.titleTextView.text = items.title
-                this.timeTextView.text = gc.get(GregorianCalendar.HOUR_OF_DAY).toString() + " : " + gc.get(GregorianCalendar.MINUTE).toString()
-                this.image.setImageResource(items.image)
+                //this.timeTextView.text = gc.get(GregorianCalendar.HOUR_OF_DAY).toString() + " : " + gc.get(GregorianCalendar.MINUTE).toString()
+                this.timeTextView.text = items.writeTime.toString()
+                this.image.setImageResource(items.imageId)
             }
         }
 
         holder.layout.setOnClickListener {
-            var intent = Intent(it.context,DayGramDetailView::class.java)
+            //var intent = Intent(it.context,DayGramDetailView::class.java)
             //intent.putExtra(EXTRA_CONTACT, contact)
             //var options = ActivityOptionsCompat.makeSceneTransitionAnimation(,it,"profile")
             //it.context.startActivity(intent,options.)
@@ -115,6 +97,7 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
     }
 
     class SnapshotViewHolder(view : View) : RecyclerView.ViewHolder(view){
+        // 레이아웃 activity_day_gram 의 View 들과 연결
         //var cardView : MaterialCardView = view.findViewById(R.id.cardView)
         var image : ImageView = view.findViewById(R.id.ImageView)
         var dateTextView : TextView = view.findViewById(R.id.DayText)
@@ -142,12 +125,18 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
 }
      */
 }
-class Snapshot(title : String = "title", main : String = "main",gc : GregorianCalendar = GregorianCalendar(TimeZone.getTimeZone("Asia/Seoul"))){
-    // init 생성자는 필요 없다네요 Kotlin 생성자는 신기하네
+class Snapshot(){
+    // 초기화, 기본값. 테스트용.
     var id : Int = 0
-    var title : String = title
-    var time = gc.timeInMillis
-    var image : Int = R.drawable.image_default
-    // 사실 Bitmap 이 뭔지 잘 모르겠다. 아직 이미지는 한 장 뿐이니까...
-    var main : String? = main
+    var title : String = "Default Title"
+    var content : String = "Default Main text"
+    var writeTime : Long = GregorianCalendar(TimeZone.getTimeZone("Asia/Seoul")).timeInMillis
+    var imageId : Int = R.drawable.image_default
+
+    // 생성자를 이렇게 만든다
+    // 글쓰기 기능 추가하면 사용할 생성자
+    constructor(t : String, m : String) : this(){
+        title = t
+        content = m
+    }
 }
