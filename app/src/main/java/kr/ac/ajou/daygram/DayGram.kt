@@ -21,6 +21,8 @@ import androidx.core.app.ActivityOptionsCompat
 import com.google.android.material.card.MaterialCardView
 import kotlinx.android.synthetic.main.activity_day_gram.*
 import java.util.*
+import java.util.jar.Attributes
+import kotlin.coroutines.coroutineContext
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -105,7 +107,6 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
             //intent.putExtra(EXTRA_CONTACT, contact)
             //var options = ActivityOptionsCompat.makeSceneTransitionAnimation(,it,"profile")
             //it.context.startActivity(intent,options.)
-
         }
     }
 
@@ -114,8 +115,7 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
     }
 
     class SnapshotViewHolder(view : View) : RecyclerView.ViewHolder(view){
-        // 일단 findViewById로... 안 쓸 수도 있는 것 같긴 한데
-        var cardView : MaterialCardView = view.findViewById(R.id.cardView)
+        //var cardView : MaterialCardView = view.findViewById(R.id.cardView)
         var image : ImageView = view.findViewById(R.id.ImageView)
         var dateTextView : TextView = view.findViewById(R.id.DayText)
         var monthTextView : TextView = view.findViewById(R.id.MonthText)
