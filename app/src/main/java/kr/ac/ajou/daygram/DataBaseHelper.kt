@@ -38,7 +38,7 @@ class DataBaseHelper(context : Context) : SQLiteOpenHelper(context,DATABASE_NAME
         var value = ContentValues()
         value.put("Title",snapshot.title)
         value.put("Time",snapshot.writeTime)
-        value.put("Image", snapshot.imageId)
+        value.put("Image", snapshot.imageSource)
         value.put("Main",snapshot.content)
         db.insert(DATABASE_SNAPSHOT,null,value)
         db.close()
@@ -53,11 +53,11 @@ class DataBaseHelper(context : Context) : SQLiteOpenHelper(context,DATABASE_NAME
 
         if(cursor.moveToFirst()){
             do{
-                var snapshot = Snapshot()
+                var snapshot = Snapshot("tempPath")
                 snapshot.id = cursor.getInt(0)
                 snapshot.title = cursor.getString(1)
                 snapshot.writeTime = cursor.getLong(2)
-                snapshot.imageId = cursor.getInt(3)
+                snapshot.imageSource = cursor.getString(3)
                 snapshot.content = cursor.getString(4)
                 list.add(snapshot)
             }while (cursor.moveToNext())

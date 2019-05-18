@@ -2,9 +2,9 @@ package kr.ac.ajou.daygram
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
@@ -31,12 +31,12 @@ import java.util.*
 
 class DayGram : AppCompatActivity() {
 
-
     val REQUEST_TAKE_PICTURE = 1
     // 사진을 저장할 경로 저장
-    private var mCurrentPhotoPath : String? = null
+    private var mCurrentPhotoPath : String = "path not initialized"
     // 찍은 사진으로 만든 Bitmap 저장
-    private var currentBitmap : Bitmap? = null
+    // 일단 기본 이미지로 설정함
+    //var currentBitmap : Bitmap = BitmapFactory.decodeResource( applicationContext.resources, R.drawable.image_default)
     //https://blog.naver.com/whdals0/221408855795
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,6 +57,8 @@ class DayGram : AppCompatActivity() {
         var db = DataBaseHelper(this)
         val recyclerViewAdapter = MainViewAdapter()
         recyclerViewAdapter.items = db.getAll()
+
+        // RecyclerView 설정
         recycler_list.adapter = recyclerViewAdapter
         val helper = PagerSnapHelper()
         helper.attachToRecyclerView(recycler_list)
@@ -64,6 +66,7 @@ class DayGram : AppCompatActivity() {
         // activity_day_gram.xml 에 있는 버튼 조작
         CameraButton.setOnClickListener {
             takePicture()
+            db.add(Snapshot(mCurrentPhotoPath))
         }
     }
 
@@ -88,9 +91,11 @@ class DayGram : AppCompatActivity() {
             //val auxFile = File(mCurrentPhotoPath)
 
             // 저장한 사진을 Bitmap 형식으로 불러온다
-            currentBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath)
+            //currentBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath)
 
             // 불러온 이미지로 작업을 함
+            // 새 item 추가
+
         }
     }
 
@@ -111,8 +116,9 @@ class DayGram : AppCompatActivity() {
 }
 
 class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
+
     // SnapshotViewHolder의 내용이 저장되는 ArrayList
-    var items : ArrayList<Snapshot> = arrayListOf(Snapshot())
+    var items : ArrayList<Snapshot> = arrayListOf()
 
     // SnapshotViewHolder 생성자를 호출해 줌. 수정할 일 없음
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): SnapshotViewHolder{
@@ -135,7 +141,8 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
                 this.titleTextView.text = items.title
                 //this.timeTextView.text = gc.get(GregorianCalendar.HOUR_OF_DAY).toString() + " : " + gc.get(GregorianCalendar.MINUTE).toString()
                 this.timeTextView.text = items.writeTime.toString()
-                this.image.setImageResource(items.imageId)
+                //this.image.setImageResource(items.imageId)
+                this.image.setImageBitmap(BitmapFactory.decodeFile(items.imageSource))
             }
         }
 
@@ -151,6 +158,7 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
     class SnapshotViewHolder(view : View) : RecyclerView.ViewHolder(view){
         // 레이아웃 activity_day_gram 의 View 들과 연결
         //var cardView : MaterialCardView = view.findViewById(R.id.cardView)
+
         var image : ImageView = view.findViewById(R.id.ImageView)
         var dateTextView : TextView = view.findViewById(R.id.DayText)
         var monthTextView : TextView = view.findViewById(R.id.MonthText)
@@ -177,18 +185,13 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
 }
      */
 }
-class Snapshot(){
+class Snapshot(imageSrc: String){
     // 초기화, 기본값. 테스트용.
     var id : Int = 0
     var title : String = "Default Title"
     var content : String = "Default Main text"
     var writeTime : Long = GregorianCalendar(TimeZone.getTimeZone("Asia/Seoul")).timeInMillis
-    var imageId : Int = R.drawable.image_default
+    var imageSource : String = imageSrc
+    //var imageId : Int = R.drawable.image_default
 
-    // 생성자를 이렇게 만든다
-    // 글쓰기 기능 추가하면 사용할 생성자
-    constructor(t : String, m : String) : this(){
-        title = t
-        content = m
-    }
 }
