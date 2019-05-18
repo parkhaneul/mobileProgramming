@@ -1,11 +1,16 @@
 package kr.ac.ajou.daygram
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -17,12 +22,21 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.FileProvider
 import kotlinx.android.synthetic.main.activity_day_gram.*
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.*
 
 class DayGram : AppCompatActivity() {
 
-    val TAKE_PICTURE = 1
+
+    val REQUEST_TAKE_PICTURE = 1
+    // 사진을 저장할 경로 저장
+    private var mCurrentPhotoPath : String? = null
+    // 찍은 사진으로 만든 Bitmap 저장
+    private var currentBitmap : Bitmap? = null
     //https://blog.naver.com/whdals0/221408855795
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +45,7 @@ class DayGram : AppCompatActivity() {
         window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         supportActionBar?.hide()
 
-        // SDK 버전, 권한 확인
+        // 안드로이드 버전 확인 후 권한 요청
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             if(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
             }else{
@@ -49,8 +63,49 @@ class DayGram : AppCompatActivity() {
 
         // activity_day_gram.xml 에 있는 버튼 조작
         CameraButton.setOnClickListener {
-            val cameraIntent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
-            startActivityForResult(cameraIntent, TAKE_PICTURE)
+            takePicture()
+        }
+    }
+
+    private fun takePicture(){
+        val cameraIntent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
+
+        // 파일을 생성하고 url을 가져온다
+        val file: File = createFile()
+        val uri: Uri = FileProvider.getUriForFile(this, "kr.ac.ajou.daygram.fileprovider", file)
+
+        // 카메라 intent 로 얻은 사진을 url 에 넣는다
+        cameraIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT,uri)
+
+        // 사진 결과 확인
+        startActivityForResult(cameraIntent, REQUEST_TAKE_PICTURE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == REQUEST_TAKE_PICTURE && resultCode == Activity.RESULT_OK){
+            // 사진을 저장할 경로 보관. 나중에 씀
+            //val auxFile = File(mCurrentPhotoPath)
+
+            // 저장한 사진을 Bitmap 형식으로 불러온다
+            currentBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath)
+
+            // 불러온 이미지로 작업을 함
+        }
+    }
+
+    @Throws(IOException::class)
+    private fun createFile(): File {
+        // 파일 이름을 정한다
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val storageDir: File = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_", /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            // Save a file: path for use with ACTION_VIEW intents
+            mCurrentPhotoPath = absolutePath
         }
     }
 }
@@ -69,7 +124,7 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
     override fun onBindViewHolder(holder : SnapshotViewHolder, position : Int) {
         // 사용자가 카드를 스크롤할 때 마다 Snapshot 의 내용들을 items 의 index 에 따라 바꾼다
         // 그러니까 여기선 값을 바꾸는 게 아니라 items 리스트의 값을 가져오기만 해야 함!
-        // 값을 바꾸려면 items 의 element, Snapshot 객체를 수정해야 함
+        // 값을 바꾸려면 items 의 element, Snapshot 객체를 수정해야 한다
 
         items[position].let { items ->
             with(holder) {
@@ -85,10 +140,7 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
         }
 
         holder.layout.setOnClickListener {
-            //var intent = Intent(it.context,DayGramDetailView::class.java)
-            //intent.putExtra(EXTRA_CONTACT, contact)
-            //var options = ActivityOptionsCompat.makeSceneTransitionAnimation(,it,"profile")
-            //it.context.startActivity(intent,options.)
+            // TODO
         }
     }
 

@@ -15,6 +15,17 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
+        <provider
+                android:name="androidx.core.content.FileProvider"
+                android:authorities="kr.ac.ajou.daygram.fileprovider"
+                android:exported="false"
+                android:grantUriPermissions="true">
+            <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/file_path">
+
+            </meta-data>
+        </provider>
         <activity
                 android:name=".DayGram"
                 android:configChanges="orientation|keyboardHidden|screenSize"
