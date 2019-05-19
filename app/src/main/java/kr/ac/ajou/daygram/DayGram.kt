@@ -32,12 +32,10 @@ class DayGram : AppCompatActivity() {
     val REQUEST_TAKE_PICTURE = 1
     // 사진을 저장할 경로 저장
     private var mCurrentPhotoPath : String = "path not initialized"
-    // 찍은 사진으로 만든 Bitmap 저장
-    // 일단 기본 이미지로 설정함
-    //var currentBitmap : Bitmap = BitmapFactory.decodeResource( applicationContext.resources, R.drawable.image_default)
-    //https://blog.naver.com/whdals0/221408855795
 
     var db = DataBaseHelper(this)
+
+    val recyclerViewAdapter = MainViewAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +53,7 @@ class DayGram : AppCompatActivity() {
 
         // 데이터베이스 설정
         //db = DataBaseHelper(this)
-        val recyclerViewAdapter = MainViewAdapter()
+        //val recyclerViewAdapter = MainViewAdapter()
         recyclerViewAdapter.items = db.getAll()
 
         // RecyclerView 설정
@@ -66,7 +64,8 @@ class DayGram : AppCompatActivity() {
         // activity_day_gram.xml 에 있는 버튼 조작
         CameraButton.setOnClickListener {
             takePicture()
-            recyclerViewAdapter.notifyItemInserted(recyclerViewAdapter.itemCount)
+            //recyclerViewAdapter.notifyItemInserted(recyclerViewAdapter.itemCount)
+            //recyclerViewAdapter.notifyDataSetChanged()
         }
     }
 
@@ -88,11 +87,12 @@ class DayGram : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == REQUEST_TAKE_PICTURE && resultCode == Activity.RESULT_OK){
 
-            // 저장한 사진을 불러온다
-            //currentBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath)
+            // db에 사진을 저장한다
             db.add(Snapshot(mCurrentPhotoPath))
 
-
+            // RecyclerView 에 추가한다
+            recyclerViewAdapter.items.add(Snapshot(mCurrentPhotoPath))
+            recyclerViewAdapter.notifyItemInserted(recyclerViewAdapter.itemCount)
         }
     }
 
@@ -114,7 +114,7 @@ class DayGram : AppCompatActivity() {
 
 class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
 
-    // SnapshotViewHolder의 내용이 저장되는 ArrayList
+    // SnapshotViewHolder 의 내용이 저장되는 ArrayList
     var items : ArrayList<Snapshot> = arrayListOf()
 
     // SnapshotViewHolder 생성자를 호출해 줌. 수정할 일 없음
@@ -131,6 +131,15 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
         holder.bind(items[position])
 
 
+        holder.titleTextView.setOnLongClickListener {
+            Toast.makeText(holder.image.context, "TitleText Clicked: " + position, Toast.LENGTH_SHORT).show()
+
+            this.notifyDataSetChanged()
+            true
+        }
+
+        // Holder 를 길게 눌렀을 때 동작
+        // db에서는 안 지워진다....
         holder.image.setOnLongClickListener{
             Toast.makeText(holder.image.context, "ViewHolder Clicked: " + position, Toast.LENGTH_SHORT).show()
 
