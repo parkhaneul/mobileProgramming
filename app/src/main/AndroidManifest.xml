@@ -29,6 +29,7 @@
         <activity
                 android:name=".DayGram"
                 android:configChanges="orientation|keyboardHidden|screenSize"
+                android:screenOrientation="portrait"
                 android:label="@string/title_activity_day_gram"
                 android:theme="@style/FullscreenTheme">
             <intent-filter>

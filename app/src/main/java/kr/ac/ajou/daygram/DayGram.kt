@@ -39,6 +39,8 @@ class DayGram : AppCompatActivity() {
     //var currentBitmap : Bitmap = BitmapFactory.decodeResource( applicationContext.resources, R.drawable.image_default)
     //https://blog.naver.com/whdals0/221408855795
 
+    var db = DataBaseHelper(this)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_day_gram)
@@ -54,7 +56,7 @@ class DayGram : AppCompatActivity() {
         }
 
         // 데이터베이스 설정
-        var db = DataBaseHelper(this)
+        db = DataBaseHelper(this)
         val recyclerViewAdapter = MainViewAdapter()
         recyclerViewAdapter.items = db.getAll()
 
@@ -66,7 +68,7 @@ class DayGram : AppCompatActivity() {
         // activity_day_gram.xml 에 있는 버튼 조작
         CameraButton.setOnClickListener {
             takePicture()
-            db.add(Snapshot(mCurrentPhotoPath))
+            recyclerViewAdapter.notifyItemInserted(recyclerViewAdapter.itemCount)
         }
     }
 
@@ -87,14 +89,11 @@ class DayGram : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == REQUEST_TAKE_PICTURE && resultCode == Activity.RESULT_OK){
-            // 사진을 저장할 경로 보관. 나중에 씀
-            //val auxFile = File(mCurrentPhotoPath)
 
-            // 저장한 사진을 Bitmap 형식으로 불러온다
+            // 저장한 사진을 불러온다
             //currentBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath)
+            db.add(Snapshot(mCurrentPhotoPath))
 
-            // 불러온 이미지로 작업을 함
-            // 새 item 추가
 
         }
     }
@@ -192,6 +191,5 @@ class Snapshot(imageSrc: String){
     var content : String = "Default Main text"
     var writeTime : Long = GregorianCalendar(TimeZone.getTimeZone("Asia/Seoul")).timeInMillis
     var imageSource : String = imageSrc
-    //var imageId : Int = R.drawable.image_default
 
 }
