@@ -19,9 +19,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.core.content.FileProvider
 import kotlinx.android.synthetic.main.activity_day_gram.*
 import java.io.File
@@ -56,7 +54,7 @@ class DayGram : AppCompatActivity() {
         }
 
         // 데이터베이스 설정
-        db = DataBaseHelper(this)
+        //db = DataBaseHelper(this)
         val recyclerViewAdapter = MainViewAdapter()
         recyclerViewAdapter.items = db.getAll()
 
@@ -127,26 +125,18 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
 
     // Custom ViewHolder
     override fun onBindViewHolder(holder : SnapshotViewHolder, position : Int) {
-        // 사용자가 카드를 스크롤할 때 마다 Snapshot 의 내용들을 items 의 index 에 따라 바꾼다
+        // 사용자가 카드를 스크롤할 때 마다 Snapshot 의 내용들을 items 의 index 에 따라 바꾸는 함수
         // 그러니까 여기선 값을 바꾸는 게 아니라 items 리스트의 값을 가져오기만 해야 함!
-        // 값을 바꾸려면 items 의 element, Snapshot 객체를 수정해야 한다
+        // ViewHolder 멤버 함수 하나에 다 집어넣음
+        holder.bind(items[position])
 
-        items[position].let { items ->
-            with(holder) {
-                val gc = GregorianCalendar(TimeZone.getTimeZone("Asia/Seoul"))
-                //gc.timeInMillis = items.writeTime
-                this.dateTextView.text = gc.get(GregorianCalendar.DATE).toString()
-                this.monthTextView.text = gc.getDisplayName(GregorianCalendar.MONTH,GregorianCalendar.LONG,Locale.US)
-                this.titleTextView.text = items.title
-                //this.timeTextView.text = gc.get(GregorianCalendar.HOUR_OF_DAY).toString() + " : " + gc.get(GregorianCalendar.MINUTE).toString()
-                this.timeTextView.text = items.writeTime.toString()
-                //this.image.setImageResource(items.imageId)
-                this.image.setImageBitmap(BitmapFactory.decodeFile(items.imageSource))
-            }
-        }
 
-        holder.layout.setOnClickListener {
-            // TODO
+        holder.image.setOnLongClickListener{
+            Toast.makeText(holder.image.context, "ViewHolder Clicked: " + position, Toast.LENGTH_SHORT).show()
+
+            items.remove(items[position])
+            this.notifyItemRemoved(position)
+            true
         }
     }
 
@@ -154,16 +144,24 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
         return items.size
     }
 
-    class SnapshotViewHolder(view : View) : RecyclerView.ViewHolder(view){
+    inner class SnapshotViewHolder(view : View) : RecyclerView.ViewHolder(view){
         // 레이아웃 activity_day_gram 의 View 들과 연결
-        //var cardView : MaterialCardView = view.findViewById(R.id.cardView)
 
         var image : ImageView = view.findViewById(R.id.ImageView)
         var dateTextView : TextView = view.findViewById(R.id.DayText)
         var monthTextView : TextView = view.findViewById(R.id.MonthText)
         var titleTextView : TextView = view.findViewById(R.id.TitleText)
         var timeTextView : TextView = view.findViewById(R.id.TimeText)
-        var layout : FrameLayout = view.findViewById(R.id.layout)
+        //var layout : FrameLayout = view.findViewById(R.id.layout)
+
+        fun bind(snapshot: Snapshot){
+            val gc = GregorianCalendar(TimeZone.getTimeZone("Asia/Seoul"))
+            dateTextView.text = gc.get(GregorianCalendar.DATE).toString()
+            monthTextView.text = gc.getDisplayName(GregorianCalendar.MONTH,GregorianCalendar.LONG,Locale.US)
+            titleTextView.text = snapshot.title
+            timeTextView.text = snapshot.writeTime.toString()
+            image.setImageBitmap(BitmapFactory.decodeFile(snapshot.imageSource))
+        }
     }
 
     /*
@@ -185,11 +183,10 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
      */
 }
 class Snapshot(imageSrc: String){
-    // 초기화, 기본값. 테스트용.
+    // 초기화, 기본값.
     var id : Int = 0
     var title : String = "Default Title"
     var content : String = "Default Main text"
     var writeTime : Long = GregorianCalendar(TimeZone.getTimeZone("Asia/Seoul")).timeInMillis
     var imageSource : String = imageSrc
-
 }

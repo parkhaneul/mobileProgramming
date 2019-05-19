@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import java.text.FieldPosition
 
 private const val DATABASE_NAME : String = "SnapShots"
 private const val DATABASE_VERSION : Int = 2
@@ -42,6 +43,12 @@ class DataBaseHelper(context : Context) : SQLiteOpenHelper(context,DATABASE_NAME
         value.put("Main",snapshot.content)
         db.insert(DATABASE_SNAPSHOT,null,value)
         db.close()
+    }
+
+    fun remove(snapshot: Snapshot, time: Long){
+        var db = this.writableDatabase
+        db.delete(DATABASE_SNAPSHOT, "Title=?", arrayOf(time.toString()))
+
     }
 
     fun getAll() : ArrayList<Snapshot>{
