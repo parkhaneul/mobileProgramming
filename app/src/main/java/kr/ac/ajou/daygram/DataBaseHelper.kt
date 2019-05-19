@@ -45,10 +45,12 @@ class DataBaseHelper(context : Context) : SQLiteOpenHelper(context,DATABASE_NAME
         db.close()
     }
 
-    fun remove(snapshot: Snapshot, time: Long){
+    // DB 에서 지울 때는 시간 : Long 을 비교해서 지운다
+    // 그러니까 Snapshot 의 시간은 같을 일이 없다고 가정함
+    fun remove(time: Long){
         var db = this.writableDatabase
-        db.delete(DATABASE_SNAPSHOT, "Title=?", arrayOf(time.toString()))
-
+        db.delete(DATABASE_SNAPSHOT, "Time=?", arrayOf(time.toString()))
+        db.close()
     }
 
     fun getAll() : ArrayList<Snapshot>{

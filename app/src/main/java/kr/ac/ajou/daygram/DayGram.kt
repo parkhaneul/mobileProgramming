@@ -2,6 +2,7 @@ package kr.ac.ajou.daygram
 
 import android.Manifest
 import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -29,13 +30,13 @@ import java.util.*
 
 class DayGram : AppCompatActivity() {
 
-    val REQUEST_TAKE_PICTURE = 1
+    private val REQUEST_TAKE_PICTURE = 1
     // 사진을 저장할 경로 저장
     private var mCurrentPhotoPath : String = "path not initialized"
 
-    var db = DataBaseHelper(this)
+    private val db = DataBaseHelper(this)
 
-    val recyclerViewAdapter = MainViewAdapter()
+    private val recyclerViewAdapter = MainViewAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,9 +52,7 @@ class DayGram : AppCompatActivity() {
             }
         }
 
-        // 데이터베이스 설정
-        //db = DataBaseHelper(this)
-        //val recyclerViewAdapter = MainViewAdapter()
+        // DB의 데이터대로 초기화
         recyclerViewAdapter.items = db.getAll()
 
         // RecyclerView 설정
@@ -64,19 +63,18 @@ class DayGram : AppCompatActivity() {
         // activity_day_gram.xml 에 있는 버튼 조작
         CameraButton.setOnClickListener {
             takePicture()
-            //recyclerViewAdapter.notifyItemInserted(recyclerViewAdapter.itemCount)
-            //recyclerViewAdapter.notifyDataSetChanged()
         }
     }
 
     private fun takePicture(){
+        // 카메라 인텐트 호출
         val cameraIntent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
 
         // 파일을 생성하고 url을 가져온다
         val file: File = createFile()
         val uri: Uri = FileProvider.getUriForFile(this, "kr.ac.ajou.daygram.fileprovider", file)
 
-        // 카메라 intent 로 얻은 사진을 url 에 넣는다
+        // 카메라 intent 로 얻은 사진을 url 에 넣는다?
         cameraIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT,uri)
 
         // 사진 결과 확인
@@ -87,12 +85,14 @@ class DayGram : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == REQUEST_TAKE_PICTURE && resultCode == Activity.RESULT_OK){
 
-            // db에 사진을 저장한다
-            db.add(Snapshot(mCurrentPhotoPath))
+
 
             // RecyclerView 에 추가한다
             recyclerViewAdapter.items.add(Snapshot(mCurrentPhotoPath))
             recyclerViewAdapter.notifyItemInserted(recyclerViewAdapter.itemCount)
+
+            // db에 사진을 저장한다
+            db.add(recyclerViewAdapter.items.last())
         }
     }
 
@@ -106,7 +106,7 @@ class DayGram : AppCompatActivity() {
             ".jpg", /* suffix */
             storageDir /* directory */
         ).apply {
-            // Save a file: path for use with ACTION_VIEW intents
+            // 파일 경로를 저장: path for use with ACTION_VIEW intents
             mCurrentPhotoPath = absolutePath
         }
     }
@@ -116,10 +116,12 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
 
     // SnapshotViewHolder 의 내용이 저장되는 ArrayList
     var items : ArrayList<Snapshot> = arrayListOf()
+    var db : DataBaseHelper? = null
 
-    // SnapshotViewHolder 생성자를 호출해 줌. 수정할 일 없음
+    // SnapshotViewHolder 생성자를 호출해 줌. 수정할 일 없음(있음)
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): SnapshotViewHolder{
         var holder = LayoutInflater.from(parent.context).inflate(R.layout.main_view_item_material, parent, false)
+        db = DataBaseHelper(parent.context)
         return SnapshotViewHolder(holder)
     }
 
@@ -130,20 +132,22 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
         // ViewHolder 멤버 함수 하나에 다 집어넣음
         holder.bind(items[position])
 
-
+        // 호출 안됨!!! 밑에 있는 ImageView가 Layout을 다 덮어 버림
         holder.titleTextView.setOnLongClickListener {
             Toast.makeText(holder.image.context, "TitleText Clicked: " + position, Toast.LENGTH_SHORT).show()
-
             this.notifyDataSetChanged()
             true
         }
 
         // Holder 를 길게 눌렀을 때 동작
-        // db에서는 안 지워진다....
         holder.image.setOnLongClickListener{
             Toast.makeText(holder.image.context, "ViewHolder Clicked: " + position, Toast.LENGTH_SHORT).show()
 
+            // DB 에서 지우고
+            db?.remove(items[position].writeTime)
+            // items ArrayList 에서 지우고
             items.remove(items[position])
+            // 새로고침
             this.notifyItemRemoved(position)
             true
         }
@@ -163,6 +167,7 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
         var timeTextView : TextView = view.findViewById(R.id.TimeText)
         //var layout : FrameLayout = view.findViewById(R.id.layout)
 
+        // onBindViewHolder 에서 호출하는 함수. View 에 값을 채워 넣는다
         fun bind(snapshot: Snapshot){
             val gc = GregorianCalendar(TimeZone.getTimeZone("Asia/Seoul"))
             dateTextView.text = gc.get(GregorianCalendar.DATE).toString()
@@ -192,7 +197,7 @@ class MainViewAdapter : Adapter<MainViewAdapter.SnapshotViewHolder>() {
      */
 }
 class Snapshot(imageSrc: String){
-    // 초기화, 기본값.
+    // 생성자. 기본값.
     var id : Int = 0
     var title : String = "Default Title"
     var content : String = "Default Main text"
