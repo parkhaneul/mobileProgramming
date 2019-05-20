@@ -51,6 +51,7 @@ class DataBaseHelper(context : Context) : SQLiteOpenHelper(context,DATABASE_NAME
         var db = this.writableDatabase
         db.delete(DATABASE_SNAPSHOT, "Time=?", arrayOf(time.toString()))
         db.close()
+        //Time으로 잡지 말고, id로 잡아야함 근데, TIme이 고유의 값이니까 그럴 필요 없겠다.
     }
 
     fun getAll() : ArrayList<Snapshot>{

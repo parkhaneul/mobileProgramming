@@ -5,20 +5,12 @@
              android:layout_width="match_parent" android:layout_height="match_parent"
              android:background="#ffffff"
              tools:context=".DayGram" android:id="@+id/main_view">
-    <com.google.android.material.appbar.AppBarLayout
-            android:layout_height="wrap_content"
+    <SearchView
             android:layout_width="match_parent"
-            android:layout_marginBottom="12dp"
-    >
-        <SearchView
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:paddingTop="24dp"
-                android:paddingBottom="12dp"
-                android:background="#ffffffff"
-        />
-    </com.google.android.material.appbar.AppBarLayout>
-
+            android:layout_height="48dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="0dp"
+            android:background="#ffffffff"/>
     <LinearLayout
             android:layout_marginTop="56dp"
             android:layout_marginBottom="48dp"
