@@ -14,12 +14,13 @@
             android:layout_gravity="center"
             android:layout_height="match_parent"
             android:background="#FFFFFF"
-            id="@+id/cardView">
+            android:id="@+id/CardView">
         <ImageView
                 android:layout_width="320dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/image_default"
                 android:scaleType="centerCrop"
+                android:transitionName="@string/tr_imageView"
                 android:id="@+id/ImageView"/>
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -31,6 +32,7 @@
                     app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="10dp"
                     app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="10dp"
                     android:textSize="60sp"
+                    android:transitionName="@string/tr_dateView"
                     android:textColor="@android:color/white"/>
             <TextView
                     android:text="Month"
@@ -38,6 +40,7 @@
                     android:layout_height="wrap_content" android:id="@+id/MonthText"
                     android:textSize="40sp"
                     android:textColor="@android:color/white"
+                    android:transitionName="@string/tr_monthView"
                     app:layout_constraintTop_toBottomOf="@id/DayText"
                     app:layout_constraintStart_toStartOf="@id/DayText"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -45,7 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:background="#FFFFFF"
+                android:background="@color/black_overlay"
                 android:orientation="vertical"
                 android:padding="8dp">
 
@@ -55,16 +58,20 @@
                     android:layout_height="wrap_content"
                     android:padding="2dp"
                     android:text="Title"
+                    android:transitionName="@string/tr_titleView"
                     android:textSize="24sp"
-                    android:textAppearance="?attr/textAppearanceHeadline6" android:id="@+id/TitleText"/>
+                    android:textAppearance="?attr/textAppearanceHeadline6" android:id="@+id/TitleText"
+                    android:textColor="@color/design_default_color_background"/>
 
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="2dp"
                     android:text="time"
+                    android:transitionName="@string/tr_timeView"
                     android:textSize="16sp"
-                    android:textAppearance="?attr/textAppearanceBody2" android:id="@+id/TimeText"/>
+                    android:textAppearance="?attr/textAppearanceBody2" android:id="@+id/TimeText"
+                    android:textColor="@color/design_default_color_background"/>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 </FrameLayout>

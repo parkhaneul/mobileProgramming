@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<transitionSet xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--
+    <explode
+          android:duration="320" />
+    <slide
+        android:slideEdge="right"
+        android:duration="1000">
+        <targets>
+            <target android:targetId="@string/tr_imageView"/>
+            <target android:targetId="@string/tr_dateView"/>
+            <target android:targetId="@string/tr_monthView"/>
+            <target android:targetId="@android:id/statusBarBackground"/>
+            <target android:targetId="@android:id/navigationBarBackground"/>
+
+        </targets>
+    </slide>-->
+    <changeBounds/>
+</transitionSet>

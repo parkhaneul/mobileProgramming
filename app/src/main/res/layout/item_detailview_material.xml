@@ -10,7 +10,8 @@
             android:layout_height="match_parent"
             android:layout_gravity="top"
             android:background="#FFFFFF"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginBottom="48dp">
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:layout_weight="0">
@@ -20,18 +21,21 @@
                     android:background="@drawable/image_default"
                     android:scaleType="centerCrop"
                     android:id="@+id/ImageView"
+                    android:transitionName="@string/tr_imageView"
                     android:layout_weight="0"
                     tools:ignore="MissingConstraints"/>
             <TextView
                     android:text="Day"
+                    android:transitionName="@string/tr_dateView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/DayText"
-                    app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="8dp"
+                    app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="20dp"
                     app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="10dp"
                     android:textSize="60sp"
                     android:textColor="@android:color/white"/>
             <TextView
                     android:text="Month"
+                    android:transitionName="@string/tr_monthView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/MonthText"
                     android:textSize="40sp"
@@ -47,6 +51,7 @@
                 android:paddingLeft="10dp"
                 android:paddingTop="10dp"
                 android:text="DAYGRAM EXAMPLE SNAPSHOT"
+                android:transitionName="@string/tr_titleView"
                 android:textSize="24sp"
                 android:textAppearance="?attr/textAppearanceHeadline6" android:id="@+id/TitleText"
                 android:layout_weight="0"/>
@@ -58,6 +63,7 @@
                 android:paddingLeft="10dp"
                 android:paddingBottom="10dp"
                 android:text="2019-05-15 21:05:30"
+                android:transitionName="@string/tr_timeView"
                 android:textSize="16sp"
                 android:textColor="@color/black_overlay"
                 android:textAppearance="?attr/textAppearanceBody2" android:id="@+id/TimeText"
@@ -68,6 +74,7 @@
                 android:layout_height="match_parent"
                 android:padding="10dp"
                 android:text="블라블라블라블라"
+                android:transitionName="@string/tr_mainView"
                 android:textSize="16sp"
                 android:textAppearance="?attr/textAppearanceBody2" android:id="@+id/MainText"
                 android:layout_weight="1"/>

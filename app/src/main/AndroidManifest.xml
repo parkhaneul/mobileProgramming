@@ -2,8 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="kr.ac.ajou.daygram">
 
-    <uses-feature android:name="android.hardware.camera2"
-                  android:required="true" />
+    <uses-feature
+            android:name="android.hardware.camera2"
+            android:required="true"/>
+
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -15,6 +17,12 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
+        <activity
+                android:name=".DayGramDetailView_material"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppThemeSharedNoActionBar">
+        </activity>
+
         <provider
                 android:name="androidx.core.content.FileProvider"
                 android:authorities="kr.ac.ajou.daygram.fileprovider"
@@ -23,14 +31,14 @@
             <meta-data
                     android:name="android.support.FILE_PROVIDER_PATHS"
                     android:resource="@xml/file_path">
-
             </meta-data>
         </provider>
+
         <activity
                 android:name=".DayGram"
                 android:configChanges="orientation|keyboardHidden|screenSize"
-                android:screenOrientation="portrait"
                 android:label="@string/title_activity_day_gram"
+                android:screenOrientation="portrait"
                 android:theme="@style/FullscreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

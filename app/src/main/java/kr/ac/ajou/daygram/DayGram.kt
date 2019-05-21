@@ -2,28 +2,23 @@ package kr.ac.ajou.daygram
 
 import android.Manifest
 import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
+import android.view.*
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.*
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.FileProvider
 import kotlinx.android.synthetic.main.activity_day_gram.*
 import java.io.File
@@ -31,6 +26,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.core.util.Pair
+import com.google.android.material.card.MaterialCardView
 
 interface callBackActivity{
     fun callBack() : Activity
@@ -51,6 +47,10 @@ class DayGram : AppCompatActivity(), callBackActivity {
         setContentView(R.layout.activity_day_gram)
         window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         supportActionBar?.hide()
+
+        //window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)
+        //window.enterTransition = Explode()
+        //window.exitTransition = Explode()
 
         // 안드로이드 버전 확인 후 권한 요청
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
@@ -100,41 +100,6 @@ class DayGram : AppCompatActivity(), callBackActivity {
         }
     }
 
-    fun exifOrientationToDegrees(exifOrientation : Int) : Int
-    {
-        if(exifOrientation == ExifInterface.ORIENTATION_ROTATE_90)
-        {
-            return 90
-        }
-        else if(exifOrientation == ExifInterface.ORIENTATION_ROTATE_180)
-        {
-            return 180
-        }
-        else if(exifOrientation == ExifInterface.ORIENTATION_ROTATE_270)
-        {
-            return 270
-        }
-        return 0
-    }
-
-    fun rotate(bitmap : Bitmap, degrees : Int) : Bitmap
-    {
-        var temp = bitmap
-        if(degrees != 0)
-        {
-            var m = Matrix()
-            m.setRotate(degrees.toFloat(), bitmap.getWidth().toFloat() / 2, bitmap.getHeight().toFloat() / 2)
-
-            var converted = Bitmap.createBitmap(bitmap, 0, 0,bitmap.getWidth(), bitmap.getHeight(), m, true)
-            if(temp != converted)
-            {
-                temp.recycle()
-                temp = converted
-            }
-        }
-        return temp;
-    }
-
     @Throws(IOException::class)
     private fun createFile(): File {
         // 파일 이름을 정한다
@@ -159,7 +124,8 @@ class DayGram : AppCompatActivity(), callBackActivity {
 class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHolder>() {
 
     // SnapshotViewHolder 의 내용이 저장되는 ArrayList
-    var callBack : callBackActivity = context as callBackActivity
+    var mContext = context
+    var callBack = context as callBackActivity
     var items : ArrayList<Snapshot> = arrayListOf()
     var db : DataBaseHelper? = null
 
@@ -167,6 +133,7 @@ class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHo
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): SnapshotViewHolder{
         var holder = LayoutInflater.from(parent.context).inflate(R.layout.main_view_item_material, parent, false)
         db = DataBaseHelper(parent.context)
+
         return SnapshotViewHolder(holder)
     }
 
@@ -176,13 +143,6 @@ class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHo
         // 그러니까 여기선 값을 바꾸는 게 아니라 items 리스트의 값을 가져오기만 해야 함!
         // ViewHolder 멤버 함수 하나에 다 집어넣음
         holder.bind(items[position])
-
-        // 호출 안됨!!! 밑에 있는 ImageView가 Layout을 다 덮어 버림
-        holder.titleTextView.setOnLongClickListener {
-            Toast.makeText(holder.image.context, "TitleText Clicked: " + position, Toast.LENGTH_SHORT).show()
-            this.notifyDataSetChanged()
-            true
-        }
 
         // Holder 를 길게 눌렀을 때 동작
         holder.image.setOnLongClickListener{
@@ -196,18 +156,6 @@ class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHo
             this.notifyItemRemoved(position)
             true
         }
-
-        holder.image.setOnClickListener {
-            var intent = Intent(it.context,DayGramDetailView::class.java);
-            val p1 : Pair<View,String>  = Pair(holder.image,"imageView")
-            val p2 : Pair<View,String> = Pair(holder.dateTextView, "dateTextView")
-            val p3 : Pair<View,String> = Pair(holder.monthTextView,"monthTextView")
-            val p4 : Pair<View,String> = Pair(holder.titleTextView, "titleTextView")
-            val p5 : Pair<View,String> = Pair(holder.timeTextView, "timeTextView")
-            var options = ActivityOptionsCompat.makeSceneTransitionAnimation(callBack.callBack(),p1,p2,p3,p4,p5);
-
-            startActivity(it.context,intent,options.toBundle())
-        }
     }
 
     override fun getItemCount(): Int {
@@ -217,23 +165,43 @@ class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHo
     inner class SnapshotViewHolder(view : View) : RecyclerView.ViewHolder(view){
         // 레이아웃 activity_day_gram 의 View 들과 연결
 
+        var data : Snapshot? = null
         var image : ImageView = view.findViewById(R.id.ImageView)
         var dateTextView : TextView = view.findViewById(R.id.DayText)
         var monthTextView : TextView = view.findViewById(R.id.MonthText)
         var titleTextView : TextView = view.findViewById(R.id.TitleText)
         var timeTextView : TextView = view.findViewById(R.id.TimeText)
-        //var layout : FrameLayout = view.findViewById(R.id.layout)
+        var cardView = view.findViewById<MaterialCardView>(R.id.CardView)
 
         // onBindViewHolder 에서 호출하는 함수. View 에 값을 채워 넣는다
         fun bind(snapshot: Snapshot){
+            data = snapshot
             val gc = GregorianCalendar(TimeZone.getTimeZone("Asia/Seoul"))
+            gc.timeInMillis = data!!.writeTime
             dateTextView.text = gc.get(GregorianCalendar.DATE).toString()
             monthTextView.text = gc.getDisplayName(GregorianCalendar.MONTH,GregorianCalendar.LONG,Locale.US)
-            titleTextView.text = snapshot.title
-            timeTextView.text = snapshot.writeTime.toString()
-
-            var bitmap = BitmapFactory.decodeFile(snapshot.imageSource)
+            titleTextView.text = data?.title
+            timeTextView.text = gc.get(GregorianCalendar.HOUR_OF_DAY).toString() + " : " + gc.get(GregorianCalendar.MINUTE).toString() + " : " + gc.get(GregorianCalendar.SECOND).toString()
+            var bitmap = BitmapFactory.decodeFile(data?.imageSource)
             image.setImageBitmap(bitmap)
+
+            image.setOnClickListener(onDetailViewListener)
+        }
+
+        var onDetailViewListener = View.OnClickListener{
+            var intent = Intent(mContext,DayGramDetailView_material::class.java)
+            intent.putExtra("image",data?.imageSource)
+            intent.putExtra("title",data?.title)
+            intent.putExtra("date",data?.writeTime)
+            intent.putExtra("content", data?.content)
+
+            val p1 : Pair<View,String>  = Pair(image,mContext.getString(R.string.tr_imageView))
+            val p2 : Pair<View,String> = Pair(dateTextView, mContext.getString(R.string.tr_dateView))
+            val p3 : Pair<View,String> = Pair(monthTextView,mContext.getString(R.string.tr_monthView))
+            val p4 : Pair<View,String> = Pair(titleTextView, mContext.getString(R.string.tr_titleView))
+            val p5 : Pair<View,String> = Pair(timeTextView, mContext.getString(R.string.tr_titleView))
+            var options = ActivityOptionsCompat.makeSceneTransitionAnimation(callBack.callBack(),p1,p2,p3,p4,p5)
+            mContext.startActivity(intent, options.toBundle())
         }
     }
 }

@@ -3,7 +3,12 @@
 
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-
+    <string name="tr_imageView">TR_IMAGE</string>
+    <string name="tr_dateView">TR_DATE</string>
+    <string name="tr_monthView">TR_MONTH</string>
+    <string name="tr_titleView">TR_TITLE</string>
+    <string name="tr_timeView">TR_TIME</string>
+    <string name="tr_mainView">TR_MAIN</string>
     <string name="title_activity_day_gram">DayGram</string>
     <string name="_30">30</string>
 </resources>
