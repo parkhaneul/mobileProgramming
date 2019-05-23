@@ -10,7 +10,7 @@
             android:layout_height="48dp"
             android:paddingTop="20dp"
             android:paddingBottom="0dp"
-            android:background="#ffffffff"/>
+            android:background="#ffffffff" android:id="@+id/searchView"/>
     <LinearLayout
             android:layout_marginTop="56dp"
             android:layout_marginBottom="48dp"

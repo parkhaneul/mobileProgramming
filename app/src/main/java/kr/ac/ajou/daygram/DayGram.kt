@@ -60,6 +60,24 @@ class DayGram : AppCompatActivity(), callBackActivity {
             }
         }
 
+        var searchView = findViewById<SearchView>(R.id.searchView)
+        searchView.setQueryHint("Search Title")
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(newText: String): Boolean {
+                recyclerViewAdapter.items = ArrayList(db.getAll().filter {
+                    it.title.contains(newText)
+                })
+                recyclerViewAdapter.notifyDataSetChanged()
+                return false
+            }
+
+            override fun onQueryTextSubmit(query: String): Boolean {
+                // task HERE
+                return false
+            }
+
+        })
+
         // DB의 데이터대로 초기화
         recyclerViewAdapter.items = db.getAll()
 
@@ -115,6 +133,7 @@ class DayGram : AppCompatActivity(), callBackActivity {
             mCurrentPhotoPath = absolutePath
         }
     }
+
 
     override fun callBack() : Activity {
         return this
