@@ -32,4 +32,9 @@
         <item name="android:background">@color/black_overlay</item>
     </style>
 
+
+    <style name="AppTheme.Button" parent="Widget.MaterialComponents.Button">
+        <item name="android:colorButtonNormal">@color/design_default_color_background</item>
+        <item name="android:textColor">@color/design_default_color_primary_dark</item>
+    </style>
 </resources>

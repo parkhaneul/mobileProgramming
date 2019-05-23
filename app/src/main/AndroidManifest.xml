@@ -23,6 +23,12 @@
                 android:theme="@style/AppThemeSharedNoActionBar">
         </activity>
 
+        <activity
+                android:name=".WriteSnapshot"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppThemeSharedNoActionBar">
+        </activity>
+
         <provider
                 android:name="androidx.core.content.FileProvider"
                 android:authorities="kr.ac.ajou.daygram.fileprovider"

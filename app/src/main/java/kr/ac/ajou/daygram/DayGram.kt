@@ -2,11 +2,13 @@ package kr.ac.ajou.daygram
 
 import android.Manifest
 import android.app.Activity
-import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -33,10 +35,6 @@ interface callBackActivity{
 }
 
 class DayGram : AppCompatActivity(), callBackActivity {
-
-    private val REQUEST_TAKE_PICTURE = 1
-    // 사진을 저장할 경로 저장
-    private var mCurrentPhotoPath : String = "path not initialized"
 
     private val db = DataBaseHelper(this)
 
@@ -88,52 +86,10 @@ class DayGram : AppCompatActivity(), callBackActivity {
 
         // activity_day_gram.xml 에 있는 버튼 조작
         CameraButton.setOnClickListener {
-            takePicture()
+            val writeIntent = Intent(this,WriteSnapshot::class.java);
+            startActivity(writeIntent)
         }
     }
-
-    private fun takePicture(){
-        // 카메라 인텐트 호출
-        val cameraIntent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
-
-        // 파일을 생성하고 url을 가져온다
-        val file: File = createFile()
-        val uri: Uri = FileProvider.getUriForFile(this, "kr.ac.ajou.daygram.fileprovider", file)
-        // 카메라 intent 로 얻은 사진을 url 에 넣는다?
-        cameraIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT,uri)
-
-        // 사진 결과 확인
-        startActivityForResult(cameraIntent, REQUEST_TAKE_PICTURE)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == REQUEST_TAKE_PICTURE && resultCode == Activity.RESULT_OK){
-            // RecyclerView 에 추가한다
-            recyclerViewAdapter.items.add(Snapshot(mCurrentPhotoPath))
-            recyclerViewAdapter.notifyItemInserted(recyclerViewAdapter.itemCount)
-
-            // db에 사진을 저장한다
-            db.add(recyclerViewAdapter.items.last())
-        }
-    }
-
-    @Throws(IOException::class)
-    private fun createFile(): File {
-        // 파일 이름을 정한다
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val storageDir: File = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-
-        return File.createTempFile(
-            "JPEG_${timeStamp}_", /* prefix */
-            ".jpg", /* suffix */
-             storageDir/* directory */
-        ).apply {
-            // 파일 경로를 저장: path for use with ACTION_VIEW intents
-            mCurrentPhotoPath = absolutePath
-        }
-    }
-
 
     override fun callBack() : Activity {
         return this
@@ -203,7 +159,6 @@ class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHo
             timeTextView.text = gc.get(GregorianCalendar.HOUR_OF_DAY).toString() + " : " + gc.get(GregorianCalendar.MINUTE).toString() + " : " + gc.get(GregorianCalendar.SECOND).toString()
             var bitmap = BitmapFactory.decodeFile(data?.imageSource)
             image.setImageBitmap(bitmap)
-
             image.setOnClickListener(onDetailViewListener)
         }
 
