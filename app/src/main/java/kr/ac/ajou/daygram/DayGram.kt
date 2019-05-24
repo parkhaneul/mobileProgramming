@@ -22,7 +22,6 @@ import kotlinx.android.synthetic.main.activity_day_gram.*
 import java.util.*
 import androidx.core.util.Pair
 import com.google.android.material.card.MaterialCardView
-import java.time.Year
 
 interface callBackActivity{
     fun callBack() : Activity
@@ -53,7 +52,7 @@ class DayGram : AppCompatActivity(), callBackActivity {
         }
 
         var searchView = findViewById<SearchView>(R.id.searchView)
-        searchView.setQueryHint("Search Title")
+        searchView.queryHint = "Search Title"
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String): Boolean {
                 recyclerViewAdapter.items = ArrayList(db.getAll().filter {
@@ -81,7 +80,8 @@ class DayGram : AppCompatActivity(), callBackActivity {
         // 연도 선택 Dialog 호출
         YearText.setOnClickListener {
             Log.d("TAT", "clicked")
-            //showYearDialog(applicationContext)
+            showYearDialog()
+            // 여기에 연도별 필터 기능 구현
         }
 
         // activity_day_gram.xml 에 있는 버튼 조작
@@ -91,39 +91,42 @@ class DayGram : AppCompatActivity(), callBackActivity {
         }
     }
 
+    private fun showYearDialog()
+    {
+        val dialog = Dialog(this)
+
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setTitle("Year Picker")
+        dialog.setContentView(R.layout.year_picker)
+
+        val applyButton : Button = dialog.findViewById(R.id.ApplyButton)
+        val cancelButton : Button = dialog.findViewById(R.id.CancelButton)
+        val numPicker : NumberPicker = dialog.findViewById(R.id.numberPicker1)
+
+        var currentYear = 2019
+
+        numPicker.maxValue = currentYear+50
+        numPicker.minValue = currentYear-50
+        numPicker.wrapSelectorWheel = false
+        numPicker.value = currentYear
+        numPicker.descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
+
+        applyButton.setOnClickListener {
+            YearText.text = numPicker.value.toString()
+            dialog.dismiss()
+        }
+        cancelButton.setOnClickListener {
+            dialog.dismiss()
+        }
+        val window = dialog.window
+        window.setLayout(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.MATCH_PARENT)
+        dialog.show()
+    }
+
     override fun callBack() : Activity {
         return this
     }
-}
-
-fun showYearDialog(context: Context)
-{
-    val d = Dialog(context)
-    d.setTitle("Year Picker")
-    d.setContentView(R.layout.year_picker)
-    val applyButton : Button = d.findViewById(R.id.ApplyButton)
-    val cancelButton : Button = d.findViewById(R.id.CancelButton)
-    val yearText : TextView = d.findViewById(R.id.YearPickerTitle)
-    val nopicker : NumberPicker = d.findViewById(R.id.numberPicker1)
-
-    var year = 2019
-    yearText.text = "" + year
-
-    nopicker.maxValue = year+50
-    nopicker.minValue = year-50
-    nopicker.wrapSelectorWheel = false
-    nopicker.value = year
-    nopicker.descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
-
-    applyButton.setOnClickListener {
-
-        d.dismiss()
-    }
-    cancelButton.setOnClickListener {
-        d.dismiss()
-
-    }
-    d.show()
 }
 
 class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHolder>() {
