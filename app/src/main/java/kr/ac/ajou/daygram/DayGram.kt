@@ -120,7 +120,6 @@ class DayGram : AppCompatActivity(), callBackActivity {
             dialog.dismiss()
         }
         val window = dialog.window
-        window.setLayout(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.MATCH_PARENT)
         dialog.show()
     }
 
