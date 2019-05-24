@@ -2,18 +2,15 @@ package kr.ac.ajou.daygram
 
 import android.Manifest
 import android.app.Activity
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Matrix
-import android.media.ExifInterface
-import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Environment
+import android.util.Log
 import android.view.*
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -21,14 +18,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import android.widget.*
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.content.FileProvider
 import kotlinx.android.synthetic.main.activity_day_gram.*
-import java.io.File
-import java.io.IOException
-import java.text.SimpleDateFormat
 import java.util.*
 import androidx.core.util.Pair
 import com.google.android.material.card.MaterialCardView
+import java.time.Year
 
 interface callBackActivity{
     fun callBack() : Activity
@@ -84,6 +78,12 @@ class DayGram : AppCompatActivity(), callBackActivity {
         val helper = PagerSnapHelper()
         helper.attachToRecyclerView(recycler_list)
 
+        // 연도 선택 Dialog 호출
+        YearText.setOnClickListener {
+            Log.d("TAT", "clicked")
+            //showYearDialog(applicationContext)
+        }
+
         // activity_day_gram.xml 에 있는 버튼 조작
         CameraButton.setOnClickListener {
             val writeIntent = Intent(this,WriteSnapshot::class.java);
@@ -94,6 +94,36 @@ class DayGram : AppCompatActivity(), callBackActivity {
     override fun callBack() : Activity {
         return this
     }
+}
+
+fun showYearDialog(context: Context)
+{
+    val d = Dialog(context)
+    d.setTitle("Year Picker")
+    d.setContentView(R.layout.year_picker)
+    val applyButton : Button = d.findViewById(R.id.ApplyButton)
+    val cancelButton : Button = d.findViewById(R.id.CancelButton)
+    val yearText : TextView = d.findViewById(R.id.YearPickerTitle)
+    val nopicker : NumberPicker = d.findViewById(R.id.numberPicker1)
+
+    var year = 2019
+    yearText.text = "" + year
+
+    nopicker.maxValue = year+50
+    nopicker.minValue = year-50
+    nopicker.wrapSelectorWheel = false
+    nopicker.value = year
+    nopicker.descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
+
+    applyButton.setOnClickListener {
+
+        d.dismiss()
+    }
+    cancelButton.setOnClickListener {
+        d.dismiss()
+
+    }
+    d.show()
 }
 
 class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHolder>() {

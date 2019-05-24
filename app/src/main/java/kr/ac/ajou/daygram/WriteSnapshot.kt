@@ -61,7 +61,7 @@ class WriteSnapshot : AppCompatActivity() {
     private fun createFile(): File {
         // 파일 이름을 정한다
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val storageDir: File = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
 
         return File.createTempFile(
             "JPEG_${timeStamp}_", /* prefix */
