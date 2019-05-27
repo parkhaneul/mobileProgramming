@@ -39,10 +39,6 @@ class DayGram : AppCompatActivity(), callBackActivity {
         window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         supportActionBar?.hide()
 
-        //window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)
-        //window.enterTransition = Explode()
-        //window.exitTransition = Explode()
-
         // 안드로이드 버전 확인 후 권한 요청
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             if(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
@@ -89,6 +85,12 @@ class DayGram : AppCompatActivity(), callBackActivity {
             val writeIntent = Intent(this,WriteSnapshot::class.java);
             startActivity(writeIntent)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        currentYear = 2019
+        recyclerViewAdapter.items = db.getAll()
     }
 
     private fun showYearDialog()
@@ -232,5 +234,13 @@ class Snapshot(imageSrc: String){
         val gc = GregorianCalendar(TimeZone.getTimeZone("Asia/Seoul"))
         gc.timeInMillis = writeTime
         return gc.get(GregorianCalendar.YEAR)
+    }
+
+    fun set_title(_title : String){
+        title = _title
+    }
+
+    fun set_content(_content : String){
+        content = _content
     }
 }

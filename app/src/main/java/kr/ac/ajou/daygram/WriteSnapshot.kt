@@ -2,13 +2,17 @@ package kr.ac.ajou.daygram
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.media.Image
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.WindowManager
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import kotlinx.android.synthetic.main.activity_write_snapshot.*
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -16,9 +20,10 @@ import java.util.*
 
 class WriteSnapshot : AppCompatActivity() {
 
+    private val db = DataBaseHelper(this)
     private val REQUEST_TAKE_PICTURE = 1
     private var mCurrentPhotoPath : String = "path not initialized"
-
+    private var snapshot : Snapshot? = null
     // 사진을 저장할 경로 저장
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +33,20 @@ class WriteSnapshot : AppCompatActivity() {
         supportActionBar?.hide()
 
         takePicture()
+        saveButton.setOnClickListener{
+            saveSnapshot()
+        }
+    }
+
+    private fun saveSnapshot(){
+        if(snapshot != null) {
+            snapshot!!.set_title(titleText.text.toString())
+            snapshot!!.set_content(contentText.text.toString())
+            db.add(snapshot!!)
+
+            val writeIntent = Intent(this,DayGram::class.java)
+            startActivity(writeIntent)
+        }
     }
 
     private fun takePicture(){
@@ -47,13 +66,9 @@ class WriteSnapshot : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == REQUEST_TAKE_PICTURE && resultCode == Activity.RESULT_OK){
-            // RecyclerView 에 추가한다
-            /*
-            recyclerViewAdapter.items.add(Snapshot(mCurrentPhotoPath))
-            recyclerViewAdapter.notifyItemInserted(recyclerViewAdapter.itemCount)
-
-            // db에 사진을 저장한다
-            db.add(recyclerViewAdapter.items.last())*/
+            var image = findViewById<ImageView>(R.id.photoResultView)
+            image.setImageBitmap(BitmapFactory.decodeFile(mCurrentPhotoPath))
+            snapshot = Snapshot(mCurrentPhotoPath)
         }
     }
 
