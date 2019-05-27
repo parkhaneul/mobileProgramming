@@ -30,7 +30,7 @@ interface callBackActivity{
 class DayGram : AppCompatActivity(), callBackActivity {
 
     private val db = DataBaseHelper(this)
-
+    var currentYear = 2019
     private val recyclerViewAdapter = MainViewAdapter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -104,16 +104,25 @@ class DayGram : AppCompatActivity(), callBackActivity {
         val cancelButton : Button = dialog.findViewById(R.id.CancelButton)
         val numPicker : NumberPicker = dialog.findViewById(R.id.numberPicker1)
 
-        var currentYear = 2019
+        var standardYear = 2019
+        //var currentYear = 2019
 
-        numPicker.maxValue = currentYear+50
-        numPicker.minValue = currentYear-50
+        numPicker.maxValue = standardYear + 50
+        numPicker.minValue = standardYear - 50
         numPicker.wrapSelectorWheel = false
-        numPicker.value = currentYear
+        numPicker.value = when(standardYear == currentYear){
+            true -> standardYear
+            else -> currentYear
+        }
         numPicker.descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
 
         applyButton.setOnClickListener {
+            currentYear = numPicker.value
             YearText.text = numPicker.value.toString()
+            recyclerViewAdapter.items = ArrayList(db.getAll().filter {
+                it.getYear() == currentYear
+            })
+            recyclerViewAdapter.notifyDataSetChanged()
             dialog.dismiss()
         }
         cancelButton.setOnClickListener {
@@ -218,4 +227,10 @@ class Snapshot(imageSrc: String){
     var content : String = "Default Main text"
     var writeTime : Long = GregorianCalendar(TimeZone.getTimeZone("Asia/Seoul")).timeInMillis
     var imageSource : String = imageSrc
+
+    fun getYear() : Int{
+        val gc = GregorianCalendar(TimeZone.getTimeZone("Asia/Seoul"))
+        gc.timeInMillis = writeTime
+        return gc.get(GregorianCalendar.YEAR)
+    }
 }
