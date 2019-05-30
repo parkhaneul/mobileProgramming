@@ -84,29 +84,27 @@ class DayGram : AppCompatActivity(), callBackActivity {
             startActivity(writeIntent)
         }
 
-        // Intent Listener. 삭제 intent 를 받기 위해 사용
+        // 삭제 intent 를 받는다
+        // DayGramDetailView.kt 참조.
         val extras : Bundle? = intent.extras
 
         if(extras != null){
-            val value : String = extras.getString("msg")
-            if(value == "DELETE_CARD")
-                removeSelectedCard()
+            // 삭제할 카드의 위치를 받는다
+            val value = extras.getInt("DELETE_CARD")
+            if(value != null)
+                removeCard(value)
         }
     }
 
-    private fun removeSelectedCard(){
-        val curPosition = recyclerViewAdapter.selectedCardPosition
+    private fun removeCard(position: Int){
         val items = recyclerViewAdapter.items
-        Log.d("TAG", "remove card "+ curPosition)
-
-        recyclerViewAdapter.get
 
         // DB 에서 지우고
-        db?.remove(items[curPosition].writeTime)
+        db?.remove(items[position].writeTime)
         // items ArrayList 에서 지우고
-        items.remove(recyclerViewAdapter.items[curPosition])
+        items.remove(recyclerViewAdapter.items[position])
         // recyclerList 에 알리고
-        recyclerViewAdapter.notifyItemRemoved(curPosition)
+        recyclerViewAdapter.notifyItemRemoved(position)
     }
 
     override fun onResume() {
@@ -167,7 +165,6 @@ class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHo
     // SnapshotViewHolder 의 내용이 저장되는 ArrayList
     var items : ArrayList<Snapshot> = arrayListOf()
     var db : DataBaseHelper? = null
-    var selectedCardPosition = 0
 
     // SnapshotViewHolder 생성자를 호출해 줌
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): SnapshotViewHolder{
@@ -178,13 +175,11 @@ class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHo
 
     // Custom ViewHolder
     override fun onBindViewHolder(holder : SnapshotViewHolder, position : Int) {
-        // 사용자가 카드를 스크롤할 때 마다 Snapshot 의 내용들을 items 의 index 에 따라 바꾸는 함수
+        // 사용자가 카드를 스크롤할 때 Snapshot 의 내용들을 items 의 index 에 따라 바꾸는 함수
         // 그러니까 여기선 값을 바꾸는 게 아니라 items 리스트의 값을 가져오기만 해야 함!
         // ViewHolder 멤버 함수 하나에 다 집어넣음
 
-        holder.bind(items[position], position)
-        Log.d("TAG", "bind card "+ selectedCardPosition)
-
+        holder.bind(items[position])
     }
 
     override fun getItemCount(): Int {
@@ -200,10 +195,9 @@ class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHo
         var monthTextView : TextView = view.findViewById(R.id.MonthText)
         var titleTextView : TextView = view.findViewById(R.id.TitleText)
         var timeTextView : TextView = view.findViewById(R.id.TimeText)
-        //var cardView = view.findViewById<MaterialCardView>(R.id.CardView)
 
         // onBindViewHolder 에서 호출하는 함수. View 에 값을 채워 넣는다
-        fun bind(snapshot: Snapshot, position: Int){
+        fun bind(snapshot: Snapshot){
             data = snapshot
             val gc = GregorianCalendar(TimeZone.getTimeZone("Asia/Seoul"))
             gc.timeInMillis = data!!.writeTime
@@ -216,15 +210,12 @@ class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHo
 
             image.setOnClickListener {
 
-                // 지금 몇 번째 카드를 선택했는지 저장해 둔다. 삭제할 때 필요함.
-                selectedCardPosition = layoutPosition
-                Log.d("TAG", "selected card "+ selectedCardPosition)
-
                 var intent = Intent(mContext, DayGramDetailView::class.java)
                 intent.putExtra("image", data?.imageSource)
                 intent.putExtra("title", data?.title)
                 intent.putExtra("date", data?.writeTime)
                 intent.putExtra("content", data?.content)
+                intent.putExtra("position", layoutPosition)
 
                 val p1: Pair<View, String> = Pair(image, mContext.getString(R.string.tr_imageView))
                 val p2: Pair<View, String> = Pair(dateTextView, mContext.getString(R.string.tr_dateView))

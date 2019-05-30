@@ -4,16 +4,15 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.ProxyFileDescriptorCallback
-import android.util.Log
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import kotlinx.android.synthetic.main.item_detailview_material.*
 import java.util.*
-import javax.security.auth.callback.Callback
 
 class DayGramDetailView : AppCompatActivity() {
+
+    private var curCardPosition : Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,20 +22,21 @@ class DayGramDetailView : AppCompatActivity() {
 
         supportPostponeEnterTransition()
 
-        // Layout 의 View 에 값 할당
-        setDetailView()
+        setDetailView()         // Layout 의 View 에 값 할당
 
         startPostponedEnterTransition()
 
         // 북마크 버튼
         StarButton.setOnClickListener {
             // DB, ImageView 도 바꿔야 한다
+            // TODO
             toggleBookmark()
         }
 
         // 삭제 버튼
         DeleteButton.setOnClickListener {
             // 팝업 등으로 확인하는 절차 필요
+            // TODO
             removeCard()
             // DetailView 액티비티 종료
             this.finish()
@@ -44,18 +44,21 @@ class DayGramDetailView : AppCompatActivity() {
     }
 
     private fun setDetailView(){
-        var intent = intent
-        var imageSource = intent.getStringExtra("image")
-        var date = intent.getLongExtra("date",0L)
-        var title = intent.getStringExtra("title")
-        var content = intent.getStringExtra("content")
+        val intent = intent
+        val imageSource = intent.getStringExtra("image")
+        val date = intent.getLongExtra("date",0L)
+        val title = intent.getStringExtra("title")
+        val content = intent.getStringExtra("content")
 
-        var imageView = findViewById<ImageView>(R.id.ImageView)
-        var dateView = findViewById<TextView>(R.id.DayText)
-        var monthView = findViewById<TextView>(R.id.MonthText)
-        var titleView = findViewById<TextView>(R.id.TitleText)
-        var timeView = findViewById<TextView>(R.id.TimeText)
-        var mainView = findViewById<TextView>(R.id.MainText)
+        // DayGram.kt 의 bind()에서 카드의 위치를 받는다
+        curCardPosition = intent.getIntExtra("position", 0)
+
+        val imageView = findViewById<ImageView>(R.id.ImageView)
+        val dateView = findViewById<TextView>(R.id.DayText)
+        val monthView = findViewById<TextView>(R.id.MonthText)
+        val titleView = findViewById<TextView>(R.id.TitleText)
+        val timeView = findViewById<TextView>(R.id.TimeText)
+        val mainView = findViewById<TextView>(R.id.MainText)
 
         imageView.setImageBitmap(BitmapFactory.decodeFile(imageSource))
         val gc = GregorianCalendar(TimeZone.getTimeZone("Asia/Seoul"))
@@ -67,15 +70,17 @@ class DayGramDetailView : AppCompatActivity() {
         mainView.text = content
     }
 
-
     private fun removeCard(){
+        // 현재 선택한 카드의 위치를 intent 로 보낸다.
         val deleteIntent = Intent(this, DayGram::class.java)
-        deleteIntent.putExtra("msg", "DELETE_CARD")
+        deleteIntent.putExtra("DELETE_CARD", curCardPosition)
         startActivityForResult(deleteIntent, 1)
-        // TODO
     }
 
     private fun toggleBookmark(){
         // TODO
+        // 지금 북마크가 되어 있는지 확인한 뒤
+        // 별 아이콘을 바꾸고
+        // Snapshot 객체의 값을 바꾼다
     }
 }
