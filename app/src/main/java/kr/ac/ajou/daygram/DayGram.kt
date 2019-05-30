@@ -21,7 +21,6 @@ import androidx.core.app.ActivityOptionsCompat
 import kotlinx.android.synthetic.main.activity_day_gram.*
 import java.util.*
 import androidx.core.util.Pair
-import com.google.android.material.card.MaterialCardView
 
 interface callBackActivity{
     fun callBack() : Activity
@@ -31,7 +30,7 @@ class DayGram : AppCompatActivity(), callBackActivity {
 
     private val db = DataBaseHelper(this)
     var currentYear = 2019
-    private val recyclerViewAdapter = MainViewAdapter(this)
+    val recyclerViewAdapter = MainViewAdapter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,7 +76,6 @@ class DayGram : AppCompatActivity(), callBackActivity {
         YearText.setOnClickListener {
             Log.d("TAT", "clicked")
             showYearDialog()
-            // 여기에 연도별 필터 기능 구현
         }
 
         // activity_day_gram.xml 에 있는 버튼 조작
@@ -93,8 +91,7 @@ class DayGram : AppCompatActivity(), callBackActivity {
         recyclerViewAdapter.items = db.getAll()
     }
 
-    private fun showYearDialog()
-    {
+    private fun showYearDialog() {
         val dialog = Dialog(this)
 
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -140,12 +137,24 @@ class DayGram : AppCompatActivity(), callBackActivity {
 }
 
 class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHolder>() {
-
-    // SnapshotViewHolder 의 내용이 저장되는 ArrayList
     var mContext = context
     var callBack = context as callBackActivity
+
+
+    // SnapshotViewHolder 의 내용이 저장되는 ArrayList
     var items : ArrayList<Snapshot> = arrayListOf()
     var db : DataBaseHelper? = null
+    var selectedCardPosition = 0
+
+    fun removeSelectedCard(){
+        // DB 에서 지우고
+        db?.remove(items[selectedCardPosition].writeTime)
+        // items ArrayList 에서 지우고
+        items.remove(items[selectedCardPosition])
+        // recyclerList 에 알리고
+        notifyItemRemoved(selectedCardPosition)
+    }
+
 
     // SnapshotViewHolder 생성자를 호출해 줌. 수정할 일 없음(있음)
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): SnapshotViewHolder{
@@ -160,20 +169,14 @@ class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHo
         // 사용자가 카드를 스크롤할 때 마다 Snapshot 의 내용들을 items 의 index 에 따라 바꾸는 함수
         // 그러니까 여기선 값을 바꾸는 게 아니라 items 리스트의 값을 가져오기만 해야 함!
         // ViewHolder 멤버 함수 하나에 다 집어넣음
+
         holder.bind(items[position])
 
         // Holder 를 길게 눌렀을 때 동작
+        /*
         holder.image.setOnLongClickListener{
-            Toast.makeText(holder.image.context, "ViewHolder Clicked: " + position, Toast.LENGTH_SHORT).show()
-
-            // DB 에서 지우고
-            db?.remove(items[position].writeTime)
-            // items ArrayList 에서 지우고
-            items.remove(items[position])
-            // 새로고침
-            this.notifyItemRemoved(position)
             true
-        }
+        }*/
     }
 
     override fun getItemCount(): Int {
@@ -189,7 +192,8 @@ class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHo
         var monthTextView : TextView = view.findViewById(R.id.MonthText)
         var titleTextView : TextView = view.findViewById(R.id.TitleText)
         var timeTextView : TextView = view.findViewById(R.id.TimeText)
-        var cardView = view.findViewById<MaterialCardView>(R.id.CardView)
+        //var cardView = view.findViewById<MaterialCardView>(R.id.CardView)
+
 
         // onBindViewHolder 에서 호출하는 함수. View 에 값을 채워 넣는다
         fun bind(snapshot: Snapshot){
@@ -202,23 +206,26 @@ class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHo
             timeTextView.text = gc.get(GregorianCalendar.HOUR_OF_DAY).toString() + " : " + gc.get(GregorianCalendar.MINUTE).toString() + " : " + gc.get(GregorianCalendar.SECOND).toString()
             var bitmap = BitmapFactory.decodeFile(data?.imageSource)
             image.setImageBitmap(bitmap)
-            image.setOnClickListener(onDetailViewListener)
-        }
 
-        var onDetailViewListener = View.OnClickListener{
-            var intent = Intent(mContext,DayGramDetailView_material::class.java)
-            intent.putExtra("image",data?.imageSource)
-            intent.putExtra("title",data?.title)
-            intent.putExtra("date",data?.writeTime)
-            intent.putExtra("content", data?.content)
+            image.setOnClickListener {
 
-            val p1 : Pair<View,String>  = Pair(image,mContext.getString(R.string.tr_imageView))
-            val p2 : Pair<View,String> = Pair(dateTextView, mContext.getString(R.string.tr_dateView))
-            val p3 : Pair<View,String> = Pair(monthTextView,mContext.getString(R.string.tr_monthView))
-            val p4 : Pair<View,String> = Pair(titleTextView, mContext.getString(R.string.tr_titleView))
-            val p5 : Pair<View,String> = Pair(timeTextView, mContext.getString(R.string.tr_titleView))
-            var options = ActivityOptionsCompat.makeSceneTransitionAnimation(callBack.callBack(),p1,p2,p3,p4,p5)
-            mContext.startActivity(intent, options.toBundle())
+                selectedCardPosition = adapterPosition
+
+                var intent = Intent(mContext, DayGramDetailView::class.java)
+                intent.putExtra("image", data?.imageSource)
+                intent.putExtra("title", data?.title)
+                intent.putExtra("date", data?.writeTime)
+                intent.putExtra("content", data?.content)
+
+                val p1: Pair<View, String> = Pair(image, mContext.getString(R.string.tr_imageView))
+                val p2: Pair<View, String> = Pair(dateTextView, mContext.getString(R.string.tr_dateView))
+                val p3: Pair<View, String> = Pair(monthTextView, mContext.getString(R.string.tr_monthView))
+                val p4: Pair<View, String> = Pair(titleTextView, mContext.getString(R.string.tr_titleView))
+                val p5: Pair<View, String> = Pair(timeTextView, mContext.getString(R.string.tr_titleView))
+                var options =
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(callBack.callBack(), p1, p2, p3, p4, p5)
+                mContext.startActivity(intent, options.toBundle())
+            }
         }
     }
 }
