@@ -1,5 +1,6 @@
 package kr.ac.ajou.daygram
 
+import android.app.Activity
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -52,9 +53,9 @@ class DayGramDetailView : AppCompatActivity() {
         DeleteButton.setOnClickListener {
             // 팝업 등으로 확인하는 절차 필요
             // Adapter 의 삭제 함수 호출
-            MainViewAdapter.removeSelectedCard()
+
             // DetainView 액티비티 종료
-            finish()
+            this.finish()
         }
     }
 }
