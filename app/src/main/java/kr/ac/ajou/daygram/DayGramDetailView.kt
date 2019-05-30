@@ -1,16 +1,17 @@
 package kr.ac.ajou.daygram
 
-import android.app.Activity
+import android.content.Intent
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.transition.Explode
-import android.view.Window
+import android.os.ProxyFileDescriptorCallback
+import android.util.Log
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import kotlinx.android.synthetic.main.item_detailview_material.*
 import java.util.*
+import javax.security.auth.callback.Callback
 
 class DayGramDetailView : AppCompatActivity() {
 
@@ -22,6 +23,27 @@ class DayGramDetailView : AppCompatActivity() {
 
         supportPostponeEnterTransition()
 
+        // Layout 의 View 에 값 할당
+        setDetailView()
+
+        startPostponedEnterTransition()
+
+        // 북마크 버튼
+        StarButton.setOnClickListener {
+            // DB, ImageView 도 바꿔야 한다
+            toggleBookmark()
+        }
+
+        // 삭제 버튼
+        DeleteButton.setOnClickListener {
+            // 팝업 등으로 확인하는 절차 필요
+            removeCard()
+            // DetailView 액티비티 종료
+            this.finish()
+        }
+    }
+
+    private fun setDetailView(){
         var intent = intent
         var imageSource = intent.getStringExtra("image")
         var date = intent.getLongExtra("date",0L)
@@ -43,19 +65,17 @@ class DayGramDetailView : AppCompatActivity() {
         titleView.text = title
         timeView.text = gc.get(GregorianCalendar.HOUR_OF_DAY).toString() + " : " + gc.get(GregorianCalendar.MINUTE).toString() + " : " + gc.get(GregorianCalendar.SECOND).toString()
         mainView.text = content
+    }
 
-        startPostponedEnterTransition()
 
-        // 북마크, 삭제 버튼
-        StarButton.setOnClickListener {
+    private fun removeCard(){
+        val deleteIntent = Intent(this, DayGram::class.java)
+        deleteIntent.putExtra("msg", "DELETE_CARD")
+        startActivityForResult(deleteIntent, 1)
+        // TODO
+    }
 
-        }
-        DeleteButton.setOnClickListener {
-            // 팝업 등으로 확인하는 절차 필요
-            // Adapter 의 삭제 함수 호출
-
-            // DetainView 액티비티 종료
-            this.finish()
-        }
+    private fun toggleBookmark(){
+        // TODO
     }
 }
