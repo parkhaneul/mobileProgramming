@@ -11,7 +11,7 @@ import android.widget.TextView
 import kotlinx.android.synthetic.main.item_detailview_material.*
 import java.util.*
 
-class DayGramDetailView_material : AppCompatActivity() {
+class DayGramDetailView : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,5 +44,17 @@ class DayGramDetailView_material : AppCompatActivity() {
         mainView.text = content
 
         startPostponedEnterTransition()
+
+        // 북마크, 삭제 버튼
+        StarButton.setOnClickListener {
+
+        }
+        DeleteButton.setOnClickListener {
+            // 팝업 등으로 확인하는 절차 필요
+            // Adapter 의 삭제 함수 호출
+            MainViewAdapter.removeSelectedCard()
+            // DetainView 액티비티 종료
+            finish()
+        }
     }
 }
