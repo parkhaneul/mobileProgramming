@@ -24,6 +24,18 @@
                     android:transitionName="@string/tr_imageView"
                     android:layout_weight="0"
                     tools:ignore="MissingConstraints"/>
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" app:srcCompat="@drawable/ic_star_border_black_24dp"
+                    android:id="@+id/star_btn" app:layout_constraintEnd_toEndOf="@+id/ImageView"
+                    app:layout_constraintBottom_toBottomOf="parent" android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"/>
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" app:srcCompat="@drawable/ic_delete_black_24dp"
+                    android:id="@+id/delete_btn" app:layout_constraintEnd_toStartOf="@id/star_btn"
+                    app:layout_constraintBottom_toBottomOf="parent" android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"/>
             <TextView
                     android:text="Day"
                     android:transitionName="@string/tr_dateView"
@@ -57,6 +69,16 @@
                 android:layout_weight="0"/>
 
         <TextView
+                android:text="Seoul Suwon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                android:textSize="16sp"
+                android:id="@+id/LocationText"
+                android:textColor="@color/black_overlay"
+                android:layout_weight="0"/>
+        <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingRight="10dp"
@@ -64,20 +86,28 @@
                 android:paddingBottom="10dp"
                 android:text="2019-05-15 21:05:30"
                 android:transitionName="@string/tr_timeView"
-                android:textSize="16sp"
+                android:textSize="12sp"
                 android:textColor="@color/black_overlay"
                 android:textAppearance="?attr/textAppearanceBody2" android:id="@+id/TimeText"
                 android:layout_weight="0"/>
 
-        <TextView
+        <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="10dp"
-                android:text="블라블라블라블라"
-                android:transitionName="@string/tr_mainView"
-                android:textSize="16sp"
-                android:textAppearance="?attr/textAppearanceBody2" android:id="@+id/MainText"
-                android:layout_weight="1"/>
+                android:fillViewport="true">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                          android:orientation="vertical">
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="10dp"
+                        android:text="블라블라블라블라"
+                        android:transitionName="@string/tr_mainView"
+                        android:textSize="16sp"
+                        android:textAppearance="?attr/textAppearanceBody2" android:id="@+id/MainText"
+                        android:layout_weight="1"/>
+            </LinearLayout>
+        </ScrollView>
 
     </LinearLayout>
 </FrameLayout>
