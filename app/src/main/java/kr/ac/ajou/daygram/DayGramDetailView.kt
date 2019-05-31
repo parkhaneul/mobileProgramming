@@ -1,5 +1,7 @@
 package kr.ac.ajou.daygram
 
+import android.app.Dialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -9,8 +11,12 @@ import android.os.Bundle
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import kotlinx.android.synthetic.main.item_detailview_material.*
 import java.util.*
+import android.widget.Toast
+
+
 
 class DayGramDetailView : AppCompatActivity() {
 
@@ -37,11 +43,21 @@ class DayGramDetailView : AppCompatActivity() {
 
         // 삭제 버튼
         DeleteButton.setOnClickListener {
-            // 팝업 등으로 확인하는 절차 필요
-            // TODO
-            removeCard()
-            // DetailView 액티비티 종료
-            this.finish()
+            // 삭제 확인 다이얼로그
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage("정말로 삭제하시겠습니까?")
+            builder.setPositiveButton("삭제") { _, _ ->
+
+                // 삭제
+                removeCard()
+                // DetailView 액티비티 종료
+                this.finish()
+            }
+
+            // 취소 버튼. 아무것도 안 함
+            builder.setNegativeButton("취소", null)
+
+            builder.show()
         }
     }
 
