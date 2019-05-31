@@ -1,7 +1,9 @@
 package kr.ac.ajou.daygram
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.WindowManager
@@ -60,7 +62,9 @@ class DayGramDetailView : AppCompatActivity() {
         val timeView = findViewById<TextView>(R.id.TimeText)
         val mainView = findViewById<TextView>(R.id.MainText)
 
-        imageView.setImageBitmap(BitmapFactory.decodeFile(imageSource))
+        var bitmap = BitmapFactory.decodeFile(imageSource)
+        imageView.setImageBitmap(rotateBitmap(bitmap, 90f))
+
         val gc = GregorianCalendar(TimeZone.getTimeZone("Asia/Seoul"))
         gc.timeInMillis = date
         dateView.text = gc.get(GregorianCalendar.DATE).toString()
@@ -68,6 +72,12 @@ class DayGramDetailView : AppCompatActivity() {
         titleView.text = title
         timeView.text = gc.get(GregorianCalendar.HOUR_OF_DAY).toString() + " : " + gc.get(GregorianCalendar.MINUTE).toString() + " : " + gc.get(GregorianCalendar.SECOND).toString()
         mainView.text = content
+    }
+
+    private fun rotateBitmap(source : Bitmap, angle : Float) : Bitmap {
+        val matrix = Matrix()
+        matrix.postRotate(angle)
+        return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
     }
 
     private fun removeCard(){

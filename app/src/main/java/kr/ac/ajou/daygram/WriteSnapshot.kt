@@ -2,7 +2,9 @@ package kr.ac.ajou.daygram
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.media.Image
 import android.net.Uri
 import android.os.Bundle
@@ -53,11 +55,12 @@ class WriteSnapshot : AppCompatActivity() {
         // 카메라 인텐트 호출
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 
-        // 파일을 생성하고 url을 가져온다
+        // 파일을 생성하고 url 을 가져온다
         val file: File = createFile()
         val uri: Uri = FileProvider.getUriForFile(this, "kr.ac.ajou.daygram.fileprovider", file)
+
         // 카메라 intent 로 얻은 사진을 url 에 넣는다?
-        cameraIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT,uri)
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT,uri)
 
         // 사진 결과 확인
         startActivityForResult(cameraIntent, REQUEST_TAKE_PICTURE)
@@ -67,9 +70,16 @@ class WriteSnapshot : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == REQUEST_TAKE_PICTURE && resultCode == Activity.RESULT_OK){
             var image = findViewById<ImageView>(R.id.photoResultView)
-            image.setImageBitmap(BitmapFactory.decodeFile(mCurrentPhotoPath))
+            var bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath)
+            image.setImageBitmap(rotateBitmap(bitmap, 90f))
             snapshot = Snapshot(mCurrentPhotoPath)
         }
+    }
+
+    private fun rotateBitmap(source : Bitmap, angle : Float) : Bitmap {
+        val matrix = Matrix()
+        matrix.postRotate(angle)
+        return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
     }
 
     @Throws(IOException::class)

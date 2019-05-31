@@ -6,7 +6,9 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -91,8 +93,7 @@ class DayGram : AppCompatActivity(), callBackActivity {
         if(extras != null){
             // 삭제할 카드의 위치를 받는다
             val value = extras.getInt("DELETE_CARD")
-            if(value != null)
-                removeCard(value)
+            removeCard(value)
         }
     }
 
@@ -100,7 +101,7 @@ class DayGram : AppCompatActivity(), callBackActivity {
         val items = recyclerViewAdapter.items
 
         // DB 에서 지우고
-        db?.remove(items[position].writeTime)
+        db.remove(items[position].writeTime)
         // items ArrayList 에서 지우고
         items.remove(recyclerViewAdapter.items[position])
         // recyclerList 에 알리고
@@ -149,7 +150,6 @@ class DayGram : AppCompatActivity(), callBackActivity {
         cancelButton.setOnClickListener {
             dialog.dismiss()
         }
-        val window = dialog.window
         dialog.show()
     }
 
@@ -205,9 +205,12 @@ class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHo
             monthTextView.text = gc.getDisplayName(GregorianCalendar.MONTH,GregorianCalendar.LONG,Locale.US)
             titleTextView.text = data?.title
             timeTextView.text = gc.get(GregorianCalendar.HOUR_OF_DAY).toString() + " : " + gc.get(GregorianCalendar.MINUTE).toString() + " : " + gc.get(GregorianCalendar.SECOND).toString()
+
             var bitmap = BitmapFactory.decodeFile(data?.imageSource)
+            bitmap = rotateBitmap(bitmap, 90.0f)
             image.setImageBitmap(bitmap)
 
+            // 카드를 하나 선택하면 DetailView 로 이동한다.
             image.setOnClickListener {
 
                 var intent = Intent(mContext, DayGramDetailView::class.java)
@@ -227,6 +230,13 @@ class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHo
                 mContext.startActivity(intent, options.toBundle())
             }
         }
+
+        private fun rotateBitmap(source : Bitmap, angle : Float) : Bitmap{
+            val matrix = Matrix()
+            matrix.postRotate(angle)
+            return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
+        }
+
     }
 }
 class Snapshot(imageSrc: String){
