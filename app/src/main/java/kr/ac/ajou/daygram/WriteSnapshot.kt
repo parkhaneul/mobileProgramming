@@ -48,6 +48,7 @@ class WriteSnapshot : AppCompatActivity() {
 
             val writeIntent = Intent(this,DayGram::class.java)
             startActivity(writeIntent)
+            this.finish()
         }
     }
 

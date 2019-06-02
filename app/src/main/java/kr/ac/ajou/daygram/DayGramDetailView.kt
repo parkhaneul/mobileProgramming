@@ -1,7 +1,5 @@
 package kr.ac.ajou.daygram
 
-import android.app.Dialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -14,7 +12,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import kotlinx.android.synthetic.main.item_detailview_material.*
 import java.util.*
-import android.widget.Toast
 
 
 
@@ -78,6 +75,7 @@ class DayGramDetailView : AppCompatActivity() {
         val timeView = findViewById<TextView>(R.id.TimeText)
         val mainView = findViewById<TextView>(R.id.MainText)
 
+        // 표시되는 이미지 회전
         var bitmap = BitmapFactory.decodeFile(imageSource)
         imageView.setImageBitmap(rotateBitmap(bitmap, 90f))
 
@@ -104,9 +102,15 @@ class DayGramDetailView : AppCompatActivity() {
     }
 
     private fun toggleBookmark(){
+        // 변경할 카드의 위치를 보낸다
+        val bookmarkIntent = Intent(this, DayGram::class.java)
+        bookmarkIntent.putExtra("TOGGLE_BOOKMARK", curCardPosition)
+        startActivityForResult(bookmarkIntent, 1)
+
+        // 별 이미지를 변경한다
+        val starImageView = findViewById<ImageView>(R.id.StarButton)
+        // setImageResource(R.drawable.ic_star_black_24dp) // 선택됨
+        // starImageView.setImageResource(R.drawable.ic_star_border_black_24dp) // 선택 안 됨
         // TODO
-        // 지금 북마크가 되어 있는지 확인한 뒤
-        // 별 아이콘을 바꾸고
-        // Snapshot 객체의 값을 바꾼다
     }
 }

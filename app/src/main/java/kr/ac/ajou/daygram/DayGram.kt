@@ -86,26 +86,39 @@ class DayGram : AppCompatActivity(), callBackActivity {
             startActivity(writeIntent)
         }
 
-        // 삭제 intent 를 받는다
-        // DayGramDetailView.kt 참조.
+        // intent 를 받는다
+        // DayGramDetailView.kt 에서 Snapshot 의 데이터를 수정할 때 필요함
         val extras : Bundle? = intent.extras
-
         if(extras != null){
-            // 삭제할 카드의 위치를 받는다
-            val value = extras.getInt("DELETE_CARD")
-            removeCard(value)
+            if(extras.containsKey("DELETE_CARD")){
+                val deletePos = extras.getInt("DELETE_CARD")
+                removeCard(deletePos)
+            }
+            else if(extras.containsKey("TOGGLE_BOOKMARK")){
+                val bookmarkPos = extras.getInt("TOGGLE_BOOKMARK")
+                toggleBookmark(bookmarkPos)
+            }
         }
     }
 
-    private fun removeCard(position: Int){
+    private fun removeCard(pos: Int){
+        // 데이터를 다 지우고 앱을 실행하면 강제종료되는 현상을 피하기 위한 코드
+        if(recyclerViewAdapter.itemCount < 1) return
+
         val items = recyclerViewAdapter.items
 
         // DB 에서 지우고
-        db.remove(items[position].writeTime)
+        db.remove(items[pos].writeTime)
         // items ArrayList 에서 지우고
-        items.remove(recyclerViewAdapter.items[position])
+        items.remove(recyclerViewAdapter.items[pos])
         // recyclerList 에 알리고
-        recyclerViewAdapter.notifyItemRemoved(position)
+        recyclerViewAdapter.notifyItemRemoved(pos)
+    }
+
+    private fun toggleBookmark(pos: Int){
+        val items = recyclerViewAdapter.items
+
+        items[pos].isBookmarked = !items[pos].isBookmarked
     }
 
     override fun onResume() {
@@ -127,7 +140,6 @@ class DayGram : AppCompatActivity(), callBackActivity {
         val numPicker : NumberPicker = dialog.findViewById(R.id.numberPicker1)
 
         var standardYear = 2019
-        //var currentYear = 2019
 
         numPicker.maxValue = standardYear + 50
         numPicker.minValue = standardYear - 50
@@ -246,6 +258,7 @@ class Snapshot(imageSrc: String){
     var content : String = "Default Main text"
     var writeTime : Long = GregorianCalendar(TimeZone.getTimeZone("Asia/Seoul")).timeInMillis
     var imageSource : String = imageSrc
+    var isBookmarked : Boolean = false
 
     fun getYear() : Int{
         val gc = GregorianCalendar(TimeZone.getTimeZone("Asia/Seoul"))
