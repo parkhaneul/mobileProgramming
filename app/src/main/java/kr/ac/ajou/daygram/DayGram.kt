@@ -29,8 +29,7 @@ interface callBackActivity{
 }
 
 class DayGram : AppCompatActivity(), callBackActivity {
-
-    private val db = DataBaseHelper(this)
+    val db = DataBaseHelper(this)
     var currentYear = 2019
     val recyclerViewAdapter = MainViewAdapter(this)
 
@@ -95,8 +94,9 @@ class DayGram : AppCompatActivity(), callBackActivity {
                 removeCard(deletePos)
             }
             else if(extras.containsKey("TOGGLE_BOOKMARK")){
-                val bookmarkPos = extras.getInt("TOGGLE_BOOKMARK")
-                toggleBookmark(bookmarkPos)
+                val id = extras.getInt("Starred_ID")
+                var starred = extras.getBoolean("Starred")
+                toggleBookmark(id,starred)
             }
         }
     }
@@ -115,16 +115,18 @@ class DayGram : AppCompatActivity(), callBackActivity {
         recyclerViewAdapter.notifyItemRemoved(pos)
     }
 
-    private fun toggleBookmark(pos: Int){
-        val items = recyclerViewAdapter.items
-
-        items[pos].isBookmarked = !items[pos].isBookmarked
+    private fun toggleBookmark(id : Int, starred : Boolean){
+        var snapshot = Snapshot("")
+        snapshot.id = id
+        snapshot.isBookmarked = starred
+        db.updateSnapshot(snapshot)
+        recyclerViewAdapter.notifyDataSetChanged()
     }
 
     override fun onResume() {
         super.onResume()
         currentYear = 2019
-        recyclerViewAdapter.items = db.getAll()
+        recyclerViewAdapter.notifyDataSetChanged()
     }
 
     private fun showYearDialog() {
@@ -231,6 +233,7 @@ class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHo
                 intent.putExtra("date", data?.writeTime)
                 intent.putExtra("content", data?.content)
                 intent.putExtra("position", layoutPosition)
+                intent.putExtra("starred",data?.isBookmarked)
 
                 val p1: Pair<View, String> = Pair(image, mContext.getString(R.string.tr_imageView))
                 val p2: Pair<View, String> = Pair(dateTextView, mContext.getString(R.string.tr_dateView))
@@ -260,6 +263,10 @@ class Snapshot(imageSrc: String){
     var imageSource : String = imageSrc
     var isBookmarked : Boolean = false
 
+    constructor(imageSrc: String, bookMarked : Boolean) : this(imageSrc){
+        this.isBookmarked = bookMarked
+    }
+
     fun getYear() : Int{
         val gc = GregorianCalendar(TimeZone.getTimeZone("Asia/Seoul"))
         gc.timeInMillis = writeTime
@@ -272,5 +279,17 @@ class Snapshot(imageSrc: String){
 
     fun set_content(_content : String){
         content = _content
+    }
+
+    fun getStarToInt() : Int{
+        if(isBookmarked){
+            return 1
+        }else{
+            return 0
+        }
+    }
+
+    fun setStarFromInt(value : Int){
+        isBookmarked = value == 1
     }
 }

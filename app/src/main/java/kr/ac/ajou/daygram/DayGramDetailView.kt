@@ -7,6 +7,7 @@ import android.graphics.Matrix
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.WindowManager
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -17,7 +18,9 @@ import java.util.*
 
 class DayGramDetailView : AppCompatActivity() {
 
+    private val db = DataBaseHelper(this)
     private var curCardPosition : Int = 0
+    private var snapshot : Snapshot? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,12 +61,19 @@ class DayGramDetailView : AppCompatActivity() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+    }
+
     private fun setDetailView(){
         val intent = intent
         val imageSource = intent.getStringExtra("image")
         val date = intent.getLongExtra("date",0L)
         val title = intent.getStringExtra("title")
         val content = intent.getStringExtra("content")
+        val starred = intent.getBooleanExtra("starred", false)
+
+        snapshot = Snapshot(imageSource, starred);
 
         // DayGram.kt 의 bind()에서 카드의 위치를 받는다
         curCardPosition = intent.getIntExtra("position", 0)
@@ -74,6 +84,7 @@ class DayGramDetailView : AppCompatActivity() {
         val titleView = findViewById<TextView>(R.id.TitleText)
         val timeView = findViewById<TextView>(R.id.TimeText)
         val mainView = findViewById<TextView>(R.id.MainText)
+        val starButton = findViewById<ImageView>(R.id.StarButton)
 
         // 표시되는 이미지 회전
         var bitmap = BitmapFactory.decodeFile(imageSource)
@@ -85,6 +96,11 @@ class DayGramDetailView : AppCompatActivity() {
         monthView.text = gc.getDisplayName(GregorianCalendar.MONTH, GregorianCalendar.LONG, Locale.US)
         titleView.text = title
         timeView.text = gc.get(GregorianCalendar.HOUR_OF_DAY).toString() + " : " + gc.get(GregorianCalendar.MINUTE).toString() + " : " + gc.get(GregorianCalendar.SECOND).toString()
+        if(starred) {
+            starButton.setBackgroundResource(R.drawable.ic_star_black_24dp)
+        }else{
+            starButton.setBackgroundResource(R.drawable.ic_star_border_black_24dp)
+        }
         mainView.text = content
     }
 
@@ -103,14 +119,20 @@ class DayGramDetailView : AppCompatActivity() {
 
     private fun toggleBookmark(){
         // 변경할 카드의 위치를 보낸다
-        val bookmarkIntent = Intent(this, DayGram::class.java)
-        bookmarkIntent.putExtra("TOGGLE_BOOKMARK", curCardPosition)
-        startActivityForResult(bookmarkIntent, 1)
+        snapshot!!.isBookmarked = !snapshot!!.isBookmarked
+
+        val markIntent = Intent(this, DayGram::class.java)
+        markIntent.putExtra("Starred_ID", snapshot!!.id)
+        markIntent.putExtra("Starred",snapshot!!.isBookmarked)
+        startActivityForResult(markIntent, 1)
 
         // 별 이미지를 변경한다
-        val starImageView = findViewById<ImageView>(R.id.StarButton)
-        // setImageResource(R.drawable.ic_star_black_24dp) // 선택됨
-        // starImageView.setImageResource(R.drawable.ic_star_border_black_24dp) // 선택 안 됨
-        // TODO
+        val starButton = findViewById<ImageView>(R.id.StarButton)
+
+        if(snapshot!!.isBookmarked) {
+            starButton.setBackgroundResource(R.drawable.ic_star_black_24dp)
+        }else{
+            starButton.setBackgroundResource(R.drawable.ic_star_border_black_24dp)
+        }
     }
 }

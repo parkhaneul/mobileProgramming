@@ -4,10 +4,11 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 import java.text.FieldPosition
 
 private const val DATABASE_NAME : String = "SnapShots"
-private const val DATABASE_VERSION : Int = 2
+private const val DATABASE_VERSION : Int = 3
 
 class DataBaseHelper(context : Context) : SQLiteOpenHelper(context,DATABASE_NAME,null, DATABASE_VERSION){
     private val DATABASE_SNAPSHOT = "Snapshot"
@@ -17,6 +18,7 @@ class DataBaseHelper(context : Context) : SQLiteOpenHelper(context,DATABASE_NAME
     private val KEY_TIME = "Time"
     private val KEY_IMAGE = "Image"
     private val KEY_MAIN = "Main"
+    private val KEY_STAR = "Star"
 
     override fun onCreate(db: SQLiteDatabase?) {
         var CREATE_SNAPSHOT : String = "CREATE TABLE " + DATABASE_SNAPSHOT + " (" +
@@ -24,6 +26,7 @@ class DataBaseHelper(context : Context) : SQLiteOpenHelper(context,DATABASE_NAME
                 KEY_TITLE + " TITLE, " +
                 KEY_TIME + " TIME, " +
                 KEY_IMAGE + " IMAGE, " +
+                KEY_STAR + " STAR, " +
                 KEY_MAIN + " MAIN);"
         db?.execSQL(CREATE_SNAPSHOT)
     }
@@ -41,6 +44,7 @@ class DataBaseHelper(context : Context) : SQLiteOpenHelper(context,DATABASE_NAME
         value.put("Time",snapshot.writeTime)
         value.put("Image", snapshot.imageSource)
         value.put("Main",snapshot.content)
+        value.put("STAR", snapshot.getStarToInt())
         db.insert(DATABASE_SNAPSHOT,null,value)
         db.close()
     }
@@ -52,6 +56,14 @@ class DataBaseHelper(context : Context) : SQLiteOpenHelper(context,DATABASE_NAME
         db.delete(DATABASE_SNAPSHOT, "Time=?", arrayOf(time.toString()))
         db.close()
         //Time으로 잡지 말고, id로 잡아야함 근데, TIme이 고유의 값이니까 그럴 필요 없겠다.
+    }
+
+    fun updateSnapshot(snapshot: Snapshot){
+        var db = this.writableDatabase
+        var value = ContentValues()
+        value.put(KEY_STAR, snapshot.getStarToInt())
+        db.update(DATABASE_SNAPSHOT, value,KEY_ID + "=" + snapshot.id, null)
+        db.close()
     }
 
     fun getAll() : ArrayList<Snapshot>{
@@ -69,6 +81,7 @@ class DataBaseHelper(context : Context) : SQLiteOpenHelper(context,DATABASE_NAME
                 snapshot.writeTime = cursor.getLong(2)
                 snapshot.imageSource = cursor.getString(3)
                 snapshot.content = cursor.getString(4)
+                snapshot.setStarFromInt(cursor.getInt(5))
                 list.add(snapshot)
             }while (cursor.moveToNext())
         }
