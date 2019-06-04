@@ -20,13 +20,13 @@
         <activity
                 android:name=".DayGramDetailView"
                 android:screenOrientation="portrait"
-                android:theme="@style/AppThemeSharedNoActionBar">
+                android:theme="@style/FullscreenTheme">
         </activity>
 
         <activity
                 android:name=".WriteSnapshot"
                 android:screenOrientation="portrait"
-                android:theme="@style/AppThemeSharedNoActionBar">
+                android:theme="@style/FullscreenTheme">
         </activity>
 
         <provider

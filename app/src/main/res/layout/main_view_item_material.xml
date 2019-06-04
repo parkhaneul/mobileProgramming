@@ -48,29 +48,45 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:background="@color/black_overlay"
-                android:orientation="vertical"
-                android:padding="8dp">
+                android:orientation="vertical">
 
 
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="2dp"
                     android:text="Title"
+                    android:paddingLeft="8dp"
                     android:transitionName="@string/tr_titleView"
                     android:textSize="24sp"
                     android:textAppearance="?attr/textAppearanceHeadline6" android:id="@+id/TitleText"
+                    android:background="@color/black_overlay"
                     android:textColor="@color/design_default_color_background"/>
 
             <TextView
                     android:layout_width="match_parent"
+                    android:layout_height="4dp"
+                    android:transitionName="TR_LOCATION"
+                    android:textSize="24sp"
+                    android:textAppearance="?attr/textAppearanceHeadline6" android:id="@+id/LocationText"
+                    android:background="@color/black_overlay"
+                    android:textColor="@color/design_default_color_background"/>
+            <TextView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="2dp"
                     android:text="time"
+                    android:paddingLeft="8dp"
                     android:transitionName="@string/tr_timeView"
                     android:textSize="16sp"
                     android:textAppearance="?attr/textAppearanceBody2" android:id="@+id/TimeText"
+                    android:background="@color/black_overlay"
+                    android:textColor="@color/design_default_color_background"/>
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp"
+                    android:transitionName="TR_CONTENT"
+                    android:textSize="24sp"
+                    android:textAppearance="?attr/textAppearanceHeadline6" android:id="@+id/ContentText"
+                    android:background="@color/black_overlay"
                     android:textColor="@color/design_default_color_background"/>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

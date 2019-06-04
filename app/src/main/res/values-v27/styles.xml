@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="FullscreenTheme" parent="AppTheme">
-        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
-        <item name="android:windowActionBarOverlay">false</item>
-        <item name="android:windowBackground">@null</item>
+    <style name="FullscreenTheme" parent="Theme.MaterialComponents.Light">
         <item name="android:windowFullscreen">false</item>
-        <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:fitsSystemWindows">true</item>
         <item name="android:windowLightNavigationBar">true</item>
-        <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowEnterTransition">@transition/explode</item>
+        <item name="android:windowExitTransition">@transition/explode</item>
+        <item name="android:windowSharedElementEnterTransition">@transition/explode</item>
+        <item name="android:windowSharedElementExitTransition">@transition/explode</item>
+    </style>
+
+    <style name="AppTheme.Button" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:colorButtonNormal">@color/black_overlay</item>
+        <item name="android:textColor">@color/cardview_light_background</item>
     </style>
 </resources>

@@ -75,6 +75,7 @@
                 android:paddingRight="10dp"
                 android:paddingLeft="10dp"
                 android:textSize="16sp"
+                android:transitionName="TR_LOCATION"
                 android:id="@+id/LocationText"
                 android:textColor="@color/black_overlay"
                 android:layout_weight="0"/>
@@ -102,7 +103,7 @@
                         android:layout_height="match_parent"
                         android:padding="10dp"
                         android:text="블라블라블라블라"
-                        android:transitionName="@string/tr_mainView"
+                        android:transitionName="TR_CONTENT"
                         android:textSize="16sp"
                         android:textAppearance="?attr/textAppearanceBody2" android:id="@+id/MainText"
                         android:layout_weight="1"/>

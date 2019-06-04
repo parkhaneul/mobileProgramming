@@ -23,9 +23,11 @@ import androidx.core.app.ActivityOptionsCompat
 import kotlinx.android.synthetic.main.activity_day_gram.*
 import java.util.*
 import androidx.core.util.Pair
+import org.w3c.dom.Text
 
 interface callBackActivity{
     fun callBack() : Activity
+    fun reload()
 }
 
 class DayGram : AppCompatActivity(), callBackActivity {
@@ -46,6 +48,8 @@ class DayGram : AppCompatActivity(), callBackActivity {
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA),1)
             }
         }
+
+        recyclerViewAdapter.setHasStableIds(true)
 
         var searchView = findViewById<SearchView>(R.id.searchView)
         searchView.queryHint = "Search Title"
@@ -75,7 +79,7 @@ class DayGram : AppCompatActivity(), callBackActivity {
 
         // 연도 선택 Dialog 호출
         YearText.setOnClickListener {
-            Log.d("TAT", "clicked")
+            //Log.d("TAT", "clicked")
             showYearDialog()
         }
 
@@ -92,11 +96,9 @@ class DayGram : AppCompatActivity(), callBackActivity {
             if(extras.containsKey("DELETE_CARD")){
                 val deletePos = extras.getInt("DELETE_CARD")
                 removeCard(deletePos)
-            }
-            else if(extras.containsKey("TOGGLE_BOOKMARK")){
-                val id = extras.getInt("Starred_ID")
-                var starred = extras.getBoolean("Starred")
-                toggleBookmark(id,starred)
+            }else if(extras.containsKey("BOOKMARK")){
+                val id = extras.getInt("BOOKMARK")
+                updateCard(id)
             }
         }
     }
@@ -115,17 +117,28 @@ class DayGram : AppCompatActivity(), callBackActivity {
         recyclerViewAdapter.notifyItemRemoved(pos)
     }
 
-    private fun toggleBookmark(id : Int, starred : Boolean){
-        var snapshot = Snapshot("")
-        snapshot.id = id
-        snapshot.isBookmarked = starred
-        db.updateSnapshot(snapshot)
+    private fun updateCard(id : Int){
+        val items = recyclerViewAdapter.items
+
+        // DB 에서 지우고
+        var snapshot = db.get(id)
+        Log.d("update", snapshot.isBookmarked.toString())
+        // items ArrayList 에서 지우고
+        items.map{
+            if(it.id == id){
+                Log.d("update", "works")
+                it.isBookmarked = snapshot.isBookmarked
+            }
+        }
+    }
+
+    override fun reload(){
         recyclerViewAdapter.notifyDataSetChanged()
     }
 
     override fun onResume() {
         super.onResume()
-        currentYear = 2019
+        //currentYear = 2019
         recyclerViewAdapter.notifyDataSetChanged()
     }
 
@@ -200,6 +213,10 @@ class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHo
         return items.size
     }
 
+    override fun getItemId(position: Int): Long {
+        return items[position].id.toLong()
+    }
+
     inner class SnapshotViewHolder(view : View) : RecyclerView.ViewHolder(view){
         // 레이아웃 activity_day_gram 의 View 들과 연결
 
@@ -208,7 +225,9 @@ class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHo
         var dateTextView : TextView = view.findViewById(R.id.DayText)
         var monthTextView : TextView = view.findViewById(R.id.MonthText)
         var titleTextView : TextView = view.findViewById(R.id.TitleText)
+        var locationTextView : TextView = view.findViewById(R.id.LocationText)
         var timeTextView : TextView = view.findViewById(R.id.TimeText)
+        var contentTextView : TextView = view.findViewById(R.id.ContentText)
 
         // onBindViewHolder 에서 호출하는 함수. View 에 값을 채워 넣는다
         fun bind(snapshot: Snapshot){
@@ -228,6 +247,7 @@ class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHo
             image.setOnClickListener {
 
                 var intent = Intent(mContext, DayGramDetailView::class.java)
+                intent.putExtra("id",data?.id)
                 intent.putExtra("image", data?.imageSource)
                 intent.putExtra("title", data?.title)
                 intent.putExtra("date", data?.writeTime)
@@ -235,13 +255,17 @@ class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHo
                 intent.putExtra("position", layoutPosition)
                 intent.putExtra("starred",data?.isBookmarked)
 
+                Log.d("snapshot cardView : ", data?.isBookmarked.toString())
+
                 val p1: Pair<View, String> = Pair(image, mContext.getString(R.string.tr_imageView))
                 val p2: Pair<View, String> = Pair(dateTextView, mContext.getString(R.string.tr_dateView))
                 val p3: Pair<View, String> = Pair(monthTextView, mContext.getString(R.string.tr_monthView))
                 val p4: Pair<View, String> = Pair(titleTextView, mContext.getString(R.string.tr_titleView))
-                val p5: Pair<View, String> = Pair(timeTextView, mContext.getString(R.string.tr_titleView))
+                val p5: Pair<View, String> = Pair(timeTextView, "TR_TIME")
+                val p6: Pair<View, String> = Pair(locationTextView, "TR_LOCATION")
+                val p7: Pair<View, String> = Pair(contentTextView, "TR_CONTENT")
                 var options =
-                    ActivityOptionsCompat.makeSceneTransitionAnimation(callBack.callBack(), p1, p2, p3, p4, p5)
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(callBack.callBack(), p1, p2, p3, p4, p5,p6,p7)
                 mContext.startActivity(intent, options.toBundle())
             }
         }
@@ -265,6 +289,10 @@ class Snapshot(imageSrc: String){
 
     constructor(imageSrc: String, bookMarked : Boolean) : this(imageSrc){
         this.isBookmarked = bookMarked
+    }
+
+    constructor(imageSrc: String, bookMarked: Boolean, id : Int) : this(imageSrc,bookMarked){
+        this.id = id
     }
 
     fun getYear() : Int{

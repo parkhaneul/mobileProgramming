@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.util.Log.*
 import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -67,13 +69,15 @@ class DayGramDetailView : AppCompatActivity() {
 
     private fun setDetailView(){
         val intent = intent
+        var id = intent.getIntExtra("id",0)
         val imageSource = intent.getStringExtra("image")
         val date = intent.getLongExtra("date",0L)
         val title = intent.getStringExtra("title")
         val content = intent.getStringExtra("content")
         val starred = intent.getBooleanExtra("starred", false)
 
-        snapshot = Snapshot(imageSource, starred);
+        Log.d("snapshot detailView : ", starred.toString())
+        snapshot = Snapshot(imageSource, starred,id);
 
         // DayGram.kt 의 bind()에서 카드의 위치를 받는다
         curCardPosition = intent.getIntExtra("position", 0)
@@ -121,10 +125,8 @@ class DayGramDetailView : AppCompatActivity() {
         // 변경할 카드의 위치를 보낸다
         snapshot!!.isBookmarked = !snapshot!!.isBookmarked
 
-        val markIntent = Intent(this, DayGram::class.java)
-        markIntent.putExtra("Starred_ID", snapshot!!.id)
-        markIntent.putExtra("Starred",snapshot!!.isBookmarked)
-        startActivityForResult(markIntent, 1)
+        var db = DataBaseHelper(this)
+        db.updateSnapshot(snapshot!!)
 
         // 별 이미지를 변경한다
         val starButton = findViewById<ImageView>(R.id.StarButton)

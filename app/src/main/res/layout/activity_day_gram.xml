@@ -8,7 +8,7 @@
     <SearchView
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:paddingTop="20dp"
+            android:paddingTop="28dp"
             android:paddingBottom="0dp"
             android:background="#ffffffff" android:id="@+id/searchView"/>
     <LinearLayout
@@ -43,6 +43,6 @@
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_gravity="center"
-                android:id="@+id/CameraButton" android:backgroundTint="#000000"/>
+                android:id="@+id/CameraButton" android:backgroundTint="@color/black_overlay"/>
     </LinearLayout>
 </FrameLayout>

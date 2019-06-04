@@ -73,7 +73,11 @@ class WriteSnapshot : AppCompatActivity() {
             var image = findViewById<ImageView>(R.id.photoResultView)
             var bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath)
             image.setImageBitmap(rotateBitmap(bitmap, 90f))
+            image.adjustViewBounds = true
             snapshot = Snapshot(mCurrentPhotoPath)
+        }else{
+            val writeIntent = Intent(this,DayGram::class.java)
+            startActivity(writeIntent)
         }
     }
 

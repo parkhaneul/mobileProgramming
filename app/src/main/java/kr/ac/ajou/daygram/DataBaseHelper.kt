@@ -44,7 +44,7 @@ class DataBaseHelper(context : Context) : SQLiteOpenHelper(context,DATABASE_NAME
         value.put("Time",snapshot.writeTime)
         value.put("Image", snapshot.imageSource)
         value.put("Main",snapshot.content)
-        value.put("STAR", snapshot.getStarToInt())
+        value.put("Star", snapshot.getStarToInt())
         db.insert(DATABASE_SNAPSHOT,null,value)
         db.close()
     }
@@ -58,11 +58,34 @@ class DataBaseHelper(context : Context) : SQLiteOpenHelper(context,DATABASE_NAME
         //Time으로 잡지 말고, id로 잡아야함 근데, TIme이 고유의 값이니까 그럴 필요 없겠다.
     }
 
-    fun updateSnapshot(snapshot: Snapshot){
+    fun get(id : Int) : Snapshot{
         var db = this.writableDatabase
-        var value = ContentValues()
-        value.put(KEY_STAR, snapshot.getStarToInt())
-        db.update(DATABASE_SNAPSHOT, value,KEY_ID + "=" + snapshot.id, null)
+        var SELECT_SNAPSHOT : String = "SELECT * FROM " + DATABASE_SNAPSHOT + " WHERE " + KEY_ID + " = " + id
+        var cursor = db.rawQuery(SELECT_SNAPSHOT,null)
+        cursor.moveToFirst()
+
+        var snapshot = Snapshot("tempPath")
+        snapshot.id = cursor.getInt(0)
+        snapshot.title = cursor.getString(1)
+        snapshot.writeTime = cursor.getLong(2)
+        snapshot.imageSource = cursor.getString(3)
+        snapshot.content = cursor.getString(4)
+        snapshot.setStarFromInt(1)
+        Log.d("get db : ", cursor.getInt(5).toString())
+
+        db.close()
+
+        return snapshot
+    }
+
+    fun updateSnapshot(snapshot: Snapshot){
+        var UPDATE_SNAPSHOT : String = "UPDATE " + DATABASE_SNAPSHOT + " SET " + KEY_STAR + " = " + snapshot.getStarToInt() + " WHERE " + KEY_ID + " = " + snapshot.id
+        var db = this.writableDatabase
+        //var value = ContentValues()
+        //value.put(KEY_STAR, snapshot.getStarToInt())
+
+        db.execSQL(UPDATE_SNAPSHOT)
+        //db.update(DATABASE_SNAPSHOT, value,KEY_ID + "=" + snapshot.id, null)
         db.close()
     }
 
@@ -81,11 +104,11 @@ class DataBaseHelper(context : Context) : SQLiteOpenHelper(context,DATABASE_NAME
                 snapshot.writeTime = cursor.getLong(2)
                 snapshot.imageSource = cursor.getString(3)
                 snapshot.content = cursor.getString(4)
-                snapshot.setStarFromInt(cursor.getInt(5))
+                snapshot.setStarFromInt(1)
                 list.add(snapshot)
             }while (cursor.moveToNext())
         }
-
+        db.close()
         return list
     }
 
