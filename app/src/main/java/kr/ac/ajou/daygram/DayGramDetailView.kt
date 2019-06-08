@@ -1,11 +1,15 @@
 package kr.ac.ajou.daygram
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.location.Address
+import android.location.Geocoder
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Debug
 import android.util.Log
 import android.util.Log.*
 import android.view.WindowManager
@@ -14,6 +18,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import kotlinx.android.synthetic.main.item_detailview_material.*
+import java.io.IOError
+import java.io.IOException
 import java.util.*
 
 
@@ -21,6 +27,7 @@ import java.util.*
 class DayGramDetailView : AppCompatActivity() {
 
     private val db = DataBaseHelper(this)
+    private val geocoder = Geocoder(this)
     private var curCardPosition : Int = 0
     private var snapshot : Snapshot? = null
 
@@ -103,7 +110,23 @@ class DayGramDetailView : AppCompatActivity() {
         monthView.text = gc.getDisplayName(GregorianCalendar.MONTH, GregorianCalendar.LONG, Locale.US)
         titleView.text = title
         timeView.text = gc.get(GregorianCalendar.HOUR_OF_DAY).toString() + " : " + gc.get(GregorianCalendar.MINUTE).toString() + " : " + gc.get(GregorianCalendar.SECOND).toString()
-        locationTextView.text = latitude.toString() + ", " + longitude.toString()
+
+        // geocoder 를 사용해서 위치 정보를 주소로 변환한다
+        var addressList : List<Address>? = null
+        try{
+            addressList = geocoder.getFromLocation(latitude, longitude, 10)
+        }
+        catch(e : IOException){
+            e.printStackTrace()
+            d("TAG", "Location translation error")
+        }
+        if(addressList!!.isEmpty()){
+            locationTextView.text = "Location info unavailable"
+        }
+        else{
+            locationTextView.text = addressList[0].getAddressLine(0)
+            //locationTextView.text = latitude.toString() + ", " + longitude.toString()
+        }
 
         if(starred) {
             starButton.setBackgroundResource(R.drawable.ic_star_black_24dp)
