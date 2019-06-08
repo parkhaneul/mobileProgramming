@@ -112,22 +112,22 @@ class DayGramDetailView : AppCompatActivity() {
         timeView.text = gc.get(GregorianCalendar.HOUR_OF_DAY).toString() + " : " + gc.get(GregorianCalendar.MINUTE).toString() + " : " + gc.get(GregorianCalendar.SECOND).toString()
 
         // geocoder 를 사용해서 위치 정보를 주소로 변환한다
-        var addressList : List<Address>? = null
         try{
-            if(latitude < 0.1 && longitude < 0.1)
-            addressList = geocoder.getFromLocation(latitude, longitude, 10)
+            //if(latitude > 0.1 && longitude > 0.1)
+            var addressList = geocoder.getFromLocation(latitude, longitude, 10)
+            if(addressList.isEmpty()){
+                locationTextView.text = "Location info unavailable"
+            }
+            else{
+                locationTextView.text = addressList[0].getAddressLine(0)
+                //locationTextView.text = latitude.toString() + ", " + longitude.toString()
+            }
         }
         catch(e : IOException){
             e.printStackTrace()
             d("TAG", "Location translation error")
         }
-        if(addressList!!.isEmpty()){
-            locationTextView.text = "Location info unavailable"
-        }
-        else{
-            locationTextView.text = addressList[0].getAddressLine(0)
-            //locationTextView.text = latitude.toString() + ", " + longitude.toString()
-        }
+
 
         if(starred) {
             starButton.setBackgroundResource(R.drawable.ic_star_black_24dp)

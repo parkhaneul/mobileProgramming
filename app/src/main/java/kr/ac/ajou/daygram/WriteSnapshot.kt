@@ -72,16 +72,13 @@ class WriteSnapshot : AppCompatActivity() {
             curLongitude = location.longitude //경도
             curLatitude = location.latitude   //위도
 
-           // var msg="New Latitude: "+curLatitude + "New Longitude: "+curLongitude
-           // Toast.makeText(context , msg, Toast.LENGTH_LONG).show()
-
         }
         override fun onProviderDisabled(provider : String) {
-            Toast.makeText(context , "Provider disabled", Toast.LENGTH_LONG).show()
+            Toast.makeText(context , "Location disabled", Toast.LENGTH_LONG).show()
         }
 
         override fun onProviderEnabled(provider : String) {
-            Toast.makeText(context , "Provider enabled", Toast.LENGTH_LONG).show()
+            Toast.makeText(context , "Location enabled", Toast.LENGTH_LONG).show()
         }
 
         override fun onStatusChanged(provider : String, status : Int, extras : Bundle) {
