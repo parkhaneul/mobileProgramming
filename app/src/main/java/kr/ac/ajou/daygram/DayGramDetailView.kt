@@ -114,6 +114,7 @@ class DayGramDetailView : AppCompatActivity() {
         // geocoder 를 사용해서 위치 정보를 주소로 변환한다
         var addressList : List<Address>? = null
         try{
+            if(latitude < 0.1 && longitude < 0.1)
             addressList = geocoder.getFromLocation(latitude, longitude, 10)
         }
         catch(e : IOException){
