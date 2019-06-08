@@ -8,7 +8,7 @@ import android.util.Log
 import java.text.FieldPosition
 
 private const val DATABASE_NAME : String = "SnapShots"
-private const val DATABASE_VERSION : Int = 3
+private const val DATABASE_VERSION : Int = 4
 
 class DataBaseHelper(context : Context) : SQLiteOpenHelper(context,DATABASE_NAME,null, DATABASE_VERSION){
     private val DATABASE_SNAPSHOT = "Snapshot"
@@ -19,6 +19,8 @@ class DataBaseHelper(context : Context) : SQLiteOpenHelper(context,DATABASE_NAME
     private val KEY_IMAGE = "Image"
     private val KEY_MAIN = "Main"
     private val KEY_STAR = "Star"
+    private val KEY_LATITUDE = "Latitude"
+    private val KEY_LONGITUDE = "Longitude"
 
     override fun onCreate(db: SQLiteDatabase?) {
         var CREATE_SNAPSHOT : String = "CREATE TABLE " + DATABASE_SNAPSHOT + " (" +
@@ -27,6 +29,8 @@ class DataBaseHelper(context : Context) : SQLiteOpenHelper(context,DATABASE_NAME
                 KEY_TIME + " TIME, " +
                 KEY_IMAGE + " IMAGE, " +
                 KEY_STAR + " STAR, " +
+                KEY_LATITUDE + " LATITUDE, " +
+                KEY_LONGITUDE + " LONGITUDE, " +
                 KEY_MAIN + " MAIN);"
         db?.execSQL(CREATE_SNAPSHOT)
     }
@@ -72,8 +76,10 @@ class DataBaseHelper(context : Context) : SQLiteOpenHelper(context,DATABASE_NAME
         snapshot.writeTime = cursor.getLong(2)
         snapshot.imageSource = cursor.getString(3)
         snapshot.content = cursor.getString(4)
+        snapshot.latitude = cursor.getDouble(5)
+        snapshot.longitude = cursor.getDouble(6)
         snapshot.setStarFromInt(1)
-        Log.d("get db : ", cursor.getInt(5).toString())
+        //Log.d("get db : ", cursor.getInt(7).toString())
 
         db.close()
 
@@ -106,6 +112,8 @@ class DataBaseHelper(context : Context) : SQLiteOpenHelper(context,DATABASE_NAME
                 snapshot.writeTime = cursor.getLong(2)
                 snapshot.imageSource = cursor.getString(3)
                 snapshot.content = cursor.getString(4)
+                snapshot.latitude = cursor.getDouble(5)
+                snapshot.longitude = cursor.getDouble(6)
                 snapshot.setStarFromInt(1)
                 list.add(snapshot)
             }while (cursor.moveToNext())

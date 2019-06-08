@@ -75,6 +75,8 @@ class DayGramDetailView : AppCompatActivity() {
         val title = intent.getStringExtra("title")
         val content = intent.getStringExtra("content")
         val starred = intent.getBooleanExtra("starred", false)
+        val latitude = intent.getDoubleExtra("latitude", 0.0)
+        val longitude = intent.getDoubleExtra("longitude", 0.0)
 
         Log.d("snapshot detailView : ", starred.toString())
         snapshot = Snapshot(imageSource, starred,id);
@@ -89,6 +91,7 @@ class DayGramDetailView : AppCompatActivity() {
         val timeView = findViewById<TextView>(R.id.TimeText)
         val mainView = findViewById<TextView>(R.id.MainText)
         val starButton = findViewById<ImageView>(R.id.StarButton)
+        val locationTextView = findViewById<TextView>(R.id.LocationText)
 
         // 표시되는 이미지 회전
         var bitmap = BitmapFactory.decodeFile(imageSource)
@@ -100,6 +103,8 @@ class DayGramDetailView : AppCompatActivity() {
         monthView.text = gc.getDisplayName(GregorianCalendar.MONTH, GregorianCalendar.LONG, Locale.US)
         titleView.text = title
         timeView.text = gc.get(GregorianCalendar.HOUR_OF_DAY).toString() + " : " + gc.get(GregorianCalendar.MINUTE).toString() + " : " + gc.get(GregorianCalendar.SECOND).toString()
+        locationTextView.text = latitude.toString() + ", " + longitude.toString()
+
         if(starred) {
             starButton.setBackgroundResource(R.drawable.ic_star_black_24dp)
         }else{

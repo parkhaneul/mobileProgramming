@@ -264,6 +264,8 @@ class MainViewAdapter(context: Context) : Adapter<MainViewAdapter.SnapshotViewHo
                 intent.putExtra("content", data?.content)
                 intent.putExtra("position", layoutPosition)
                 intent.putExtra("starred",data?.isBookmarked)
+                intent.putExtra("latitude", data?.latitude)
+                intent.putExtra("longitude", data?.longitude)
 
                 Log.d("snapshot cardView : ", data?.isBookmarked.toString())
 
