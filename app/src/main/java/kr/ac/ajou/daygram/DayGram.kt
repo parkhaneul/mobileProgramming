@@ -47,8 +47,18 @@ class DayGram : AppCompatActivity(), callBackActivity {
             }else{
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA),1)
             }
-        }
 
+            // 위치정보 권한 요청 추가
+            if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            }else{
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),1)
+            }
+
+            if(checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            }else{
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),1)
+            }
+        }
         recyclerViewAdapter.setHasStableIds(true)
 
         var searchView = findViewById<SearchView>(R.id.searchView)
@@ -286,6 +296,8 @@ class Snapshot(imageSrc: String){
     var writeTime : Long = GregorianCalendar(TimeZone.getTimeZone("Asia/Seoul")).timeInMillis
     var imageSource : String = imageSrc
     var isBookmarked : Boolean = false
+    var latitude : Double? = null
+    var longitude : Double? = null
 
     constructor(imageSrc: String, bookMarked : Boolean) : this(imageSrc){
         this.isBookmarked = bookMarked

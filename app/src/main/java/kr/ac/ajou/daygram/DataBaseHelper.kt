@@ -44,6 +44,8 @@ class DataBaseHelper(context : Context) : SQLiteOpenHelper(context,DATABASE_NAME
         value.put("Time",snapshot.writeTime)
         value.put("Image", snapshot.imageSource)
         value.put("Main",snapshot.content)
+        value.put("Latitude", snapshot.latitude)
+        value.put("Longitude", snapshot.longitude)
         value.put("Star", snapshot.getStarToInt())
         db.insert(DATABASE_SNAPSHOT,null,value)
         db.close()

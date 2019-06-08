@@ -1,17 +1,24 @@
 package kr.ac.ajou.daygram
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.media.Image
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.WindowManager
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import kotlinx.android.synthetic.main.activity_write_snapshot.*
@@ -23,7 +30,14 @@ import java.util.*
 class WriteSnapshot : AppCompatActivity() {
 
     private val db = DataBaseHelper(this)
+    private var locationManager : LocationManager? = null
     private val REQUEST_TAKE_PICTURE = 1
+    private val context : Context = this
+
+    // 현재 경도 위도
+    private var curLongitude : Double? = null
+    private var curLatitude : Double? = null
+
     private var mCurrentPhotoPath : String = "path not initialized"
     private var snapshot : Snapshot? = null
     // 사진을 저장할 경로 저장
@@ -34,16 +48,54 @@ class WriteSnapshot : AppCompatActivity() {
         window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         supportActionBar?.hide()
 
+        // 위치정보 받아오기 시도
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager?
+        try{
+            locationManager?.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 200L, 0F, locationListener)
+            locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 200L, 0F, locationListener)
+        }
+        catch (ex:SecurityException){
+            Toast.makeText(window.context, "No location available", Toast.LENGTH_SHORT).show()
+        }
+
+
         takePicture()
         saveButton.setOnClickListener{
             saveSnapshot()
         }
     }
 
+    private var locationListener = object : LocationListener {
+        override fun onLocationChanged(location : Location) {
+            //여기서 위치값이 갱신되면 이벤트가 발생한다.
+            //값은 Location 형태로 리턴
+            curLongitude = location.longitude //경도
+            curLatitude = location.latitude   //위도
+
+            var msg="New Latitude: "+curLatitude + "New Longitude: "+curLongitude
+            Toast.makeText(context , msg, Toast.LENGTH_LONG).show()
+
+        }
+        override fun onProviderDisabled(provider : String) {
+            Toast.makeText(context , "Provider disabled", Toast.LENGTH_LONG).show()
+        }
+
+        override fun onProviderEnabled(provider : String) {
+            Toast.makeText(context , "Provider enabled", Toast.LENGTH_LONG).show()
+        }
+
+        override fun onStatusChanged(provider : String, status : Int, extras : Bundle) {
+            Toast.makeText(context , "Status changed", Toast.LENGTH_LONG).show()
+        }
+    }
+
+
     private fun saveSnapshot(){
         if(snapshot != null) {
             snapshot!!.set_title(titleText.text.toString())
             snapshot!!.set_content(contentText.text.toString())
+            snapshot!!.latitude = curLatitude
+            snapshot!!.longitude = curLongitude
             db.add(snapshot!!)
 
             val writeIntent = Intent(this,DayGram::class.java)
